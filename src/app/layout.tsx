@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "BypassrAI — Humanize AI Text & Bypass AI Detectors",
   description:
     "Convert AI-generated content into human-sounding text that passes every AI detection tool. Humanize, paraphrase, and check AI score.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({

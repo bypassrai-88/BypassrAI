@@ -33,7 +33,7 @@ export default function AccountPage() {
         router.replace("/login");
         return;
       }
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Failed to load account");
       setData(json);
     } catch (err) {
@@ -81,7 +81,7 @@ export default function AccountPage() {
     setMessage(null);
     try {
       const res = await fetch("/api/trial/start", { method: "POST" });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not start trial");
       if (json.url) {
         window.location.href = json.url;
@@ -117,7 +117,7 @@ export default function AccountPage() {
     setMessage(null);
     try {
       const res = await fetch("/api/trial/cancel", { method: "POST" });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not cancel trial");
       setMessage({ type: "success", text: json.message || "Trial canceled. You can keep using your remaining words until the trial period ends." });
       await fetchAccount();

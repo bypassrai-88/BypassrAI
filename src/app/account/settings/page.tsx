@@ -142,7 +142,7 @@ export default function SettingsPage() {
     setMessage(null);
     try {
       const res = await fetch("/api/stripe/create-portal-session", { method: "POST" });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not open billing portal");
       if (json.url) window.location.href = json.url;
       else throw new Error("No portal URL");

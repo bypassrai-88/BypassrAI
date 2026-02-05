@@ -150,7 +150,7 @@ export function PlanCheckoutButton({ planId, cta, primary }: PlanCheckoutButtonP
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ plan: planId }),
           });
-          const json = await res.json();
+          const json = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(json.error || "Could not start checkout");
           if (json.url) openCheckoutPopup(json.url);
           else throw new Error("No checkout URL");

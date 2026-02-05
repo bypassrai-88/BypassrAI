@@ -150,12 +150,34 @@ Start with Option A (Checkout after trial end); add Option B later if you want a
 ## 8. Checklist
 
 - [ ] Stripe account created; Test mode on for dev.
-- [ ] `.env.local` has `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_REGULAR_PRICE_ID`.
-- [ ] Product “Regular” and monthly price created; `STRIPE_REGULAR_PRICE_ID` set.
-- [ ] `npm install stripe` run; webhook and create-checkout-session routes in place.
+- [ ] `.env.local` has `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, and the three price IDs (Lite, Pro, Premium).
+- [ ] Products Lite, Pro, Premium and monthly prices created; `STRIPE_LITE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PREMIUM_PRICE_ID` set.
+- [ ] Webhook and create-checkout-session routes in place (repo default).
 - [ ] Local: `stripe listen --forward-to localhost:3000/api/webhooks/stripe`; `STRIPE_WEBHOOK_SECRET` set to the CLI secret.
-- [ ] Production: Webhook endpoint added in Stripe with the 4 events; `STRIPE_WEBHOOK_SECRET` set in hosting to the Dashboard signing secret.
+- [ ] Production: Webhook endpoint added in Stripe with the 4 events; `STRIPE_WEBHOOK_SECRET` set in Vercel to the Dashboard signing secret; see **§9 Production Stripe**.
 - [ ] Account or Pricing page has a “Subscribe” button that calls `/api/stripe/create-checkout-session` and redirects to the returned URL.
-- [ ] Success/cancel URLs for Checkout set (e.g. `/account?success=1` and `/account?cancel=1`).
+- [ ] Success/cancel URLs: app uses `NEXT_PUBLIC_APP_URL` or Vercel URL automatically (see `getStripeBaseUrl`).
 
 After that, Stripe is wired: users can subscribe, and your app stays in sync via the webhook.
+
+---
+
+## 9. Production Stripe (live payments)
+
+When you’re ready to accept real payments on your deployed app (e.g. Vercel):
+
+1. **Stripe Dashboard:** Turn off **Test mode** (toggle top-right) so you’re in **Live mode**.
+2. **Create the same products/prices in Live mode** (Product catalog → Add product for Lite, Pro, Premium). Copy the **live** Price IDs (they’re different from test).
+3. **API keys:** Developers → API keys. Copy the **live** Publishable key (`pk_live_...`) and **Secret key** (`sk_live_...`).
+4. **Vercel env vars:** In your Vercel project → Settings → Environment Variables, set for **Production** (and Preview if you want):
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = your live publishable key
+   - `STRIPE_SECRET_KEY` = your live secret key
+   - `STRIPE_LITE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PREMIUM_PRICE_ID` = your **live** price IDs (from step 2)
+   - `NEXT_PUBLIC_APP_URL` = your production URL, e.g. `https://bypassrai.vercel.app` (so Checkout success/cancel and Portal return URLs point to the right place). If you don’t set this, the app uses Vercel’s `VERCEL_URL` automatically.
+5. **Production webhook:** In Stripe (still in Live mode) → Developers → Webhooks → Add endpoint.
+   - **Endpoint URL:** `https://your-production-url.vercel.app/api/webhooks/stripe`
+   - **Events:** `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`
+   - After creating, reveal the **Signing secret** and set in Vercel: `STRIPE_WEBHOOK_SECRET` = that secret (use this only for production; keep a separate secret for local CLI).
+6. **Redeploy** (push a commit or trigger a redeploy in Vercel) so the new env vars are used.
+
+Keep **test** keys and price IDs in `.env.local` for local development; use **live** keys and price IDs only in Vercel (production).

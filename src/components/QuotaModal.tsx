@@ -137,7 +137,7 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
     setActionLoading("trial");
     try {
       const res = await fetch("/api/trial/start", { method: "POST" });
-      const json = await res.json();
+      const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not start trial");
       if (json.url) {
         window.open(json.url, "stripe-checkout", "width=500,height=700,scrollbars=yes");

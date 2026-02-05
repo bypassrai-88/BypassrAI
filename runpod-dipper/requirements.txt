@@ -1,0 +1,6 @@
+transformers>=4.40.0
+accelerate>=0.28.0
+bitsandbytes>=0.42.0
+nltk>=3.8.0
+tokenizers>=0.15.0
+runpod>=1.6.0

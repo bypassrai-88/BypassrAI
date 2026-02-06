@@ -60,6 +60,7 @@ export default function AccountPage() {
       const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
       const sessionId = params?.get("session_id");
       const success = params?.get("success") === "1";
+      const planUpdated = params?.get("plan_updated") === "1";
       if (success) {
         try {
           await fetch("/api/stripe/sync-checkout-session", {
@@ -70,6 +71,10 @@ export default function AccountPage() {
         } catch {
           // ignore sync errors
         }
+        router.replace("/account", { scroll: false });
+      }
+      if (planUpdated) {
+        setMessage({ type: "success", text: "Plan updated. Your subscription has been changed." });
         router.replace("/account", { scroll: false });
       }
       fetchAccount();

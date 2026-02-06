@@ -28,7 +28,7 @@ Use this when setting up Stripe (local and production).
 | `STRIPE_PRO_PRICE_ID` | Create Pro product in Live mode → copy Price ID | `price_...` |
 | `STRIPE_PREMIUM_PRICE_ID` | Create Premium product in Live mode → copy Price ID | `price_...` |
 | `STRIPE_WEBHOOK_SECRET` | Stripe (Live) → Developers → Webhooks → Add endpoint → `https://YOUR_DOMAIN/api/webhooks/stripe` → reveal Signing secret | `whsec_...` |
-| `NEXT_PUBLIC_APP_URL` | Your live site URL (optional; app falls back to Vercel URL) | `https://bypassrai.vercel.app` |
+| `NEXT_PUBLIC_APP_URL` | Your live site URL. **Use your custom domain** (e.g. `https://bypassrai.com`) so Stripe redirects back to the same domain and users stay logged in. | `https://bypassrai.com` |
 
 ---
 

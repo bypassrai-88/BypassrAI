@@ -2,7 +2,7 @@ import type { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const COOKIE_NAME = "bypassrai_anon_id";
-const MAX_ANON_USES = 3;
+const MAX_ANON_USES = 2;
 const MAX_ANON_WORDS_PER_USE = 500;
 
 export function countWords(text: string): number {

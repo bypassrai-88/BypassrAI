@@ -49,17 +49,40 @@ export async function POST(request: NextRequest) {
       { data: existingSub },
     ] = await Promise.all([
       admin.from("profiles").select("stripe_customer_id").eq("id", user.id).maybeSingle(),
-      admin.from("subscriptions").select("status").eq("user_id", user.id).maybeSingle(),
+      admin.from("subscriptions").select("status, plan, stripe_subscription_id").eq("user_id", user.id).maybeSingle(),
     ]);
     const customerId = profile?.stripe_customer_id ?? undefined;
 
     const hasActiveOrTrial = existingSub?.status === "active" || existingSub?.status === "trial";
+    const currentPlan = existingSub?.plan === "trial" ? "lite" : (existingSub?.plan ?? null);
+
     if (hasActiveOrTrial && customerId) {
-      const portalSession = await stripe.billingPortal.sessions.create({
-        customer: customerId,
-        return_url: `${baseUrl}/account`,
-      });
-      return NextResponse.json({ url: portalSession.url });
+      if (plan === currentPlan) {
+        const portalSession = await stripe.billingPortal.sessions.create({
+          customer: customerId,
+          return_url: `${baseUrl}/account`,
+        });
+        return NextResponse.json({ url: portalSession.url });
+      }
+      if (existingSub?.stripe_subscription_id) {
+        try {
+          const sub = await stripe.subscriptions.retrieve(existingSub.stripe_subscription_id);
+          const itemId = sub.items.data[0]?.id;
+          if (itemId && priceId) {
+            await stripe.subscriptions.update(existingSub.stripe_subscription_id, {
+              items: [{ id: itemId, price: priceId }],
+              proration_behavior: "create_prorations",
+            });
+            return NextResponse.json({ url: `${baseUrl}/account?plan_updated=1`, fullRedirect: true });
+          }
+        } catch (err) {
+          console.error("[create-checkout-session] subscription update failed", err);
+          return NextResponse.json(
+            { error: "Could not change plan. Try managing your subscription from your account page." },
+            { status: 500 }
+          );
+        }
+      }
     }
 
     const sessionParams: Stripe.Checkout.SessionCreateParams = {

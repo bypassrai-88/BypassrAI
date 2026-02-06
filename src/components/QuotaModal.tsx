@@ -140,7 +140,7 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || "Could not start trial");
       if (json.url) {
-        window.open(json.url, "stripe-checkout", "width=500,height=700,scrollbars=yes");
+        window.location.href = json.url;
         handleClose();
       }
     } catch (e) {

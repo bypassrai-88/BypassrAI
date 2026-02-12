@@ -213,7 +213,7 @@ const heroCtaClass =
 const finalCtaClass =
   "mt-6 inline-flex rounded-xl bg-primary-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-600/25 hover:bg-primary-700";
 
-/** Hero CTA: Use the AI Humanizer. 2 free uses (cookie), then prompt to sign in / free trial. */
+/** Hero CTA: Use the AI Humanizer. Try free; we prompt to sign in / free trial when limit is reached. */
 export function HeroCTA() {
   const { loading, hasSubscription } = useAccountSubscription();
 
@@ -234,14 +234,14 @@ export function HeroCTA() {
       </Link>
       {!hasSubscription && (
         <span className="text-sm text-neutral-500">
-          2 free uses, no signup · Sign in for free trial or more
+          Try free · Sign in for free trial or more
         </span>
       )}
     </div>
   );
 }
 
-/** Final CTA: Use the humanizer; 2 free uses, then sign in / free trial. */
+/** Final CTA: Use the humanizer; try free, then sign in / free trial when prompted. */
 export function FinalCTA() {
   const { loading, hasSubscription } = useAccountSubscription();
 
@@ -262,7 +262,7 @@ export function FinalCTA() {
       </Link>
       {!hasSubscription && (
         <p className="mt-3 text-sm text-neutral-500">
-          2 free uses, no signup · Sign in for free trial or paid plan
+          Try free · Sign in for free trial or paid plan
         </p>
       )}
     </div>

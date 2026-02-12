@@ -54,7 +54,7 @@ export default function BypassTurnitinPage() {
           <div className="mt-10 rounded-xl border border-primary-200 bg-primary-50/30 p-6">
             <h2 className="text-lg font-semibold text-neutral-900">Humanize and bypass detectors</h2>
             <p className="mt-2 text-neutral-600">
-              BypassrAI is built to produce human-sounding text that passes AI checkers. Get 2 free uses, or{" "}
+              BypassrAI is built to produce human-sounding text that passes AI checkers. Try free, or{" "}
               <Link href="/pricing" className="font-medium text-primary-600 hover:underline">view plans</Link> for more.
             </p>
             <p className="mt-4">

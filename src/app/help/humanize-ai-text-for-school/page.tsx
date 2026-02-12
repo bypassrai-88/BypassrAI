@@ -57,7 +57,7 @@ export default function HumanizeAiTextForSchoolPage() {
           <div className="mt-10 rounded-xl border border-primary-200 bg-primary-50/30 p-6">
             <h2 className="text-lg font-semibold text-neutral-900">Get started free</h2>
             <p className="mt-2 text-neutral-600">
-              BypassrAI gives you 2 free uses with no signup. For more words and a 7-day free trial,{" "}
+              BypassrAI lets you try free. For more words and a 7-day free trial,{" "}
               <Link href="/pricing" className="font-medium text-primary-600 hover:underline">see Pricing</Link>.
             </p>
             <p className="mt-4">

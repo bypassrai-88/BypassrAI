@@ -57,7 +57,7 @@ export default function AiDetectorTipsPage() {
           <div className="mt-10 rounded-xl border border-primary-200 bg-primary-50/30 p-6">
             <h2 className="text-lg font-semibold text-neutral-900">Humanize + detect in one place</h2>
             <p className="mt-2 text-neutral-600">
-              BypassrAI lets you humanize text and check your AI score. Start with 2 free uses, or{" "}
+              BypassrAI lets you humanize text and check your AI score. Try free, or{" "}
               <Link href="/pricing" className="font-medium text-primary-600 hover:underline">get a plan</Link> for more.
             </p>
             <p className="mt-4 flex flex-wrap gap-3">

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "AI Humanizer — BypassrAI",
-  description: "Humanize AI-generated text so it passes every AI detector. 2 free uses, no signup.",
+  description: "Humanize AI-generated text so it passes every AI detector. Try free.",
 };
 
 export default function HumanizePage() {

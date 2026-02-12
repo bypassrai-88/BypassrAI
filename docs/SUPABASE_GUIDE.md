@@ -81,6 +81,19 @@ create index if not exists idx_anonymous_usage_anonymous_id
   on public.anonymous_usage(anonymous_id);
 ```
 
+**Optional — for admin stats by period (all time, last 30 days, last 7 days, today):**
+
+```sql
+create table if not exists public.anonymous_usage_events (
+  id uuid primary key default gen_random_uuid(),
+  anonymous_id text not null,
+  words_used int not null default 0,
+  created_at timestamptz not null default now()
+);
+create index if not exists idx_anonymous_usage_events_created_at
+  on public.anonymous_usage_events(created_at);
+```
+
 ### 4.2 User profiles / trial (extends Supabase Auth)
 
 ```sql

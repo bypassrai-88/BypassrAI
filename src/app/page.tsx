@@ -61,7 +61,7 @@ const testimonials = [
 const faqs = [
   { q: "How does BypassrAI work?", a: "You paste your text, optionally check the AI score, then click Humanize. Our engine rewrites the content to sound natural while keeping your meaning." },
   { q: "Does it bypass Turnitin and other AI checkers?", a: "We test against leading detectors and update our system regularly. Results vary by detector; we aim for human-like output." },
-  { q: "How much does it cost?", a: "Guests get 2 free uses (no signup). Sign up for a 7-day free trial or a monthly plan for more. Cancel anytime." },
+  { q: "How much does it cost?", a: "Try it free. Sign up for a 7-day free trial or a monthly plan for more. Cancel anytime." },
   { q: "What languages are supported?", a: "English is fully supported. More languages may be added later." },
 ];
 

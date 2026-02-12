@@ -86,13 +86,14 @@ export async function incrementAnonymousUsage(
       .eq("anonymous_id", anonymousId)
       .maybeSingle();
 
+    const now = new Date().toISOString();
     if (row) {
       await supabase
         .from("anonymous_usage")
         .update({
           uses_count: row.uses_count + 1,
           words_used: (row.words_used ?? 0) + wordCount,
-          updated_at: new Date().toISOString(),
+          updated_at: now,
         })
         .eq("anonymous_id", anonymousId);
     } else {
@@ -100,8 +101,18 @@ export async function incrementAnonymousUsage(
         anonymous_id: anonymousId,
         uses_count: 1,
         words_used: wordCount,
-        updated_at: new Date().toISOString(),
+        updated_at: now,
       });
+    }
+    // Log event for admin stats by period (all time, last month, week, today)
+    try {
+      await supabase.from("anonymous_usage_events").insert({
+        anonymous_id: anonymousId,
+        words_used: wordCount,
+        created_at: now,
+      });
+    } catch {
+      // Table may not exist yet; run the SQL in docs/SUPABASE_ANONYMOUS_EVENTS.md
     }
   } catch (e) {
     console.error("Failed to increment anonymous usage:", e);

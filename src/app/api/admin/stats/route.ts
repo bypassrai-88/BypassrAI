@@ -53,8 +53,9 @@ export async function GET(request: NextRequest) {
       .slice(0, 15)
       .map(([id]) => id);
 
-    // Fetch emails for subscription users and top users
-    const idsForEmail = [...new Set([...subsWithUser.map((s) => s.user_id).filter(Boolean), ...topUserIds])];
+    // Fetch emails for subscription users and top users (unique ids, no Set to avoid downlevelIteration)
+    const allIds = subsWithUser.map((s) => s.user_id).filter((id): id is string => Boolean(id)).concat(topUserIds);
+    const idsForEmail = allIds.filter((id, i) => allIds.indexOf(id) === i);
     let emailByUserId: Record<string, string> = {};
     if (idsForEmail.length > 0) {
       const { data: profileRows } = await admin.from("profiles").select("id, email").in("id", idsForEmail);

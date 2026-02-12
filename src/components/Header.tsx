@@ -31,6 +31,7 @@ function isToolsActive(pathname: string) {
 export function Header() {
   const pathname = usePathname();
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -57,6 +58,7 @@ export function Header() {
 
   useEffect(() => {
     setToolsOpen(false);
+    setMobileMenuOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -68,6 +70,12 @@ export function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-primary-100/80 bg-header-gradient shadow-sm shadow-primary-900/5 backdrop-blur">
@@ -140,36 +148,127 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          {userEmail ? (
-            <>
-              <Link
-                href="/account"
-                className="text-sm font-medium text-neutral-600 transition-colors hover:text-primary-600"
-              >
-                Account
-              </Link>
-              <span className="text-sm text-neutral-400" title={userEmail}>
-                {username ?? userEmail.replace(/(.{2}).*(@.*)/, "$1…$2")}
-              </span>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-primary-600/25 transition hover:bg-primary-700"
-              >
-                Try for free
-              </Link>
-            </>
-          )}
+          {/* Desktop: nav + account */}
+          <nav className="hidden md:flex items-center gap-3">
+            {userEmail ? (
+              <>
+                <Link
+                  href="/account"
+                  className="text-sm font-medium text-neutral-600 transition-colors hover:text-primary-600"
+                >
+                  Account
+                </Link>
+                <span className="text-sm text-neutral-400" title={userEmail}>
+                  {username ?? userEmail.replace(/(.{2}).*(@.*)/, "$1…$2")}
+                </span>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-primary-600/25 transition hover:bg-primary-700"
+                >
+                  Try for free
+                </Link>
+              </>
+            )}
+          </nav>
+
+          {/* Mobile: hamburger */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute left-0 right-0 top-16 z-40 border-b border-primary-100/80 bg-white shadow-lg backdrop-blur">
+          <nav className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-1">
+            {mainNavLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="border-t border-neutral-100 pt-2 mt-1">
+              <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Tools</div>
+              {toolsDropdownLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`block rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                    pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            {otherLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="border-t border-neutral-100 pt-2 mt-1">
+              {userEmail ? (
+                <Link
+                  href="/account"
+                  className="block rounded-lg px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                >
+                  Account
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="block rounded-lg px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="mx-4 mt-2 block rounded-xl bg-primary-600 py-3 text-center text-sm font-semibold text-white"
+                  >
+                    Try for free
+                  </Link>
+                </>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

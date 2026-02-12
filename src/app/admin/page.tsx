@@ -10,7 +10,7 @@ type AdminStats = {
     vercelEnv: string | null;
     nodeEnv: string;
   };
-    summary: {
+  summary: {
     totalUsers: number;
     totalProfiles: number;
     totalSubscriptions: number;
@@ -27,6 +27,9 @@ type AdminStats = {
     last7Days: { uses: number; words: number };
     today: { uses: number; words: number };
   };
+  anonByDay?: { date: string; uses: number }[];
+  subscriptionsWithEmail?: { user_id?: string; email: string; status: string; plan: string; current_period_end: string | null }[];
+  topUsersByWords?: { user_id: string; email: string; words_used: number }[];
   recentProfiles: { id: string; email?: string | null; created_at?: string | null; trial_used?: boolean }[];
   authUsers?: { id: string; email?: string; created_at?: string }[];
   env: {
@@ -96,15 +99,128 @@ export default function AdminPage() {
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-6 flex-wrap">
               <button
                 onClick={() => setStats(null)}
                 className="text-zinc-400 hover:text-zinc-200 text-sm"
               >
                 ← Change secret / sign out
               </button>
+              <button
+                onClick={loadStats}
+                className="text-emerald-400 hover:text-emerald-300 text-sm"
+              >
+                Refresh
+              </button>
               <span className="text-zinc-500 text-xs">Updated {new Date(stats.generatedAt).toLocaleString()}</span>
             </div>
+
+            {/* Hero stats */}
+            <section className="mb-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="rounded-xl border border-zinc-700 bg-zinc-900/80 p-5">
+                  <div className="text-3xl font-bold text-white">{stats.summary.totalUsers.toLocaleString()}</div>
+                  <div className="text-sm text-zinc-400 mt-1">Users</div>
+                </div>
+                <div className="rounded-xl border border-amber-600/40 bg-amber-950/30 p-5">
+                  <div className="text-3xl font-bold text-amber-200">{stats.summary.totalAnonUses.toLocaleString()}</div>
+                  <div className="text-sm text-zinc-400 mt-1">Anonymous uses (all time)</div>
+                </div>
+                <div className="rounded-xl border border-zinc-700 bg-zinc-900/80 p-5">
+                  <div className="text-3xl font-bold text-white">{stats.summary.totalWordsUsed.toLocaleString()}</div>
+                  <div className="text-sm text-zinc-400 mt-1">Words (paid)</div>
+                </div>
+                <div className="rounded-xl border border-emerald-600/40 bg-emerald-950/20 p-5">
+                  <div className="text-3xl font-bold text-emerald-200">{stats.summary.totalSubscriptions.toLocaleString()}</div>
+                  <div className="text-sm text-zinc-400 mt-1">Subscriptions</div>
+                </div>
+              </div>
+            </section>
+
+            {/* Anonymous uses by day (bar chart) */}
+            {stats.anonByDay && stats.anonByDay.length > 0 && (
+              <section className="mb-8">
+                <h2 className="text-lg font-medium mb-3">Anonymous uses by day (last 14 days)</h2>
+                <div className="rounded-lg border border-zinc-700 bg-zinc-900/50 p-4">
+                  <div className="flex items-end gap-1 h-36">
+                    {stats.anonByDay.map(({ date, uses }) => {
+                      const max = Math.max(...stats.anonByDay!.map((d) => d.uses), 1);
+                      const pct = max ? (uses / max) * 100 : 0;
+                      return (
+                        <div key={date} className="flex-1 flex flex-col items-center justify-end gap-1 min-w-0">
+                          <div
+                            className="w-full max-w-[24px] mx-auto bg-amber-500/70 rounded-t min-h-[2px]"
+                            style={{ height: `${Math.max(pct, 2)}%` }}
+                            title={`${date}: ${uses} uses`}
+                          />
+                          <span className="text-[10px] text-zinc-500 truncate w-full text-center" title={date}>{date.slice(5)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="flex justify-between mt-1 text-xs text-zinc-500">
+                    <span>{stats.anonByDay[0]?.date}</span>
+                    <span>{stats.anonByDay[stats.anonByDay.length - 1]?.date}</span>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Subscriptions with email */}
+            {stats.subscriptionsWithEmail && stats.subscriptionsWithEmail.length > 0 && (
+              <section className="mb-8">
+                <h2 className="text-lg font-medium mb-3">Subscriptions</h2>
+                <div className="overflow-x-auto rounded-lg border border-zinc-700">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-700 bg-zinc-900/50">
+                        <th className="text-left p-3 font-medium">Email</th>
+                        <th className="text-left p-3 font-medium">Plan</th>
+                        <th className="text-left p-3 font-medium">Status</th>
+                        <th className="text-left p-3 font-medium">Period end</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.subscriptionsWithEmail.map((s, i) => (
+                        <tr key={s.user_id ?? i} className="border-b border-zinc-800">
+                          <td className="p-3">{s.email}</td>
+                          <td className="p-3">{s.plan}</td>
+                          <td className="p-3">{s.status}</td>
+                          <td className="p-3 text-zinc-400">{s.current_period_end ? new Date(s.current_period_end).toLocaleDateString() : "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* Top users by words */}
+            {stats.topUsersByWords && stats.topUsersByWords.length > 0 && (
+              <section className="mb-8">
+                <h2 className="text-lg font-medium mb-3">Top users by words used</h2>
+                <div className="overflow-x-auto rounded-lg border border-zinc-700">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-700 bg-zinc-900/50">
+                        <th className="text-left p-3 font-medium">#</th>
+                        <th className="text-left p-3 font-medium">Email</th>
+                        <th className="text-right p-3 font-medium">Words</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.topUsersByWords.map((u, i) => (
+                        <tr key={u.user_id} className="border-b border-zinc-800">
+                          <td className="p-3 text-zinc-500">{i + 1}</td>
+                          <td className="p-3">{u.email}</td>
+                          <td className="p-3 text-right font-mono">{u.words_used.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
 
             {/* Site details */}
             {stats.site && (
@@ -229,10 +345,10 @@ export default function AdminPage() {
               </div>
             </section>
 
-            {/* Summary */}
+            {/* Summary & breakdown */}
             <section className="mb-8">
-              <h2 className="text-lg font-medium mb-3">Summary</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <h2 className="text-lg font-medium mb-3">Summary & breakdown</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
                 <div className="rounded-lg border border-zinc-700 p-3 bg-zinc-900/50">
                   <div className="text-2xl font-semibold">{stats.summary.totalUsers}</div>
                   <div className="text-xs text-zinc-400">Users (auth)</div>
@@ -247,15 +363,35 @@ export default function AdminPage() {
                 </div>
                 <div className="rounded-lg border border-zinc-700 p-3 bg-zinc-900/50">
                   <div className="text-2xl font-semibold">{stats.summary.totalWordsUsed.toLocaleString()}</div>
-                  <div className="text-xs text-zinc-400">Words used (paid)</div>
+                  <div className="text-xs text-zinc-400">Words (paid)</div>
                 </div>
               </div>
-              <div className="mt-3 flex flex-wrap gap-4 text-sm">
-                <span>By status: {Object.entries(stats.summary.subscriptionsByStatus).map(([k, v]) => `${k}: ${v}`).join(", ") || "—"}</span>
-                <span>By plan: {Object.entries(stats.summary.subscriptionsByPlan).map(([k, v]) => `${k}: ${v}`).join(", ") || "—"}</span>
-              </div>
-              <div className="mt-2 text-sm text-zinc-400">
-                Logged-in usage rows: {stats.summary.usageRowsCount}
+              <div className="rounded-lg border border-zinc-700 bg-zinc-900/30 p-4 space-y-3">
+                <div>
+                  <div className="text-xs text-zinc-500 mb-1">By status</div>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(stats.summary.subscriptionsByStatus).map(([k, v]) => (
+                      <span key={k} className="inline-flex items-center rounded-full bg-zinc-700/80 px-2.5 py-0.5 text-xs">
+                        {k}: <strong className="ml-1">{v}</strong>
+                      </span>
+                    ))}
+                    {Object.keys(stats.summary.subscriptionsByStatus).length === 0 && <span className="text-zinc-500 text-sm">—</span>}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-500 mb-1">By plan</div>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(stats.summary.subscriptionsByPlan).map(([k, v]) => (
+                      <span key={k} className="inline-flex items-center rounded-full bg-emerald-900/40 px-2.5 py-0.5 text-xs text-emerald-200">
+                        {k}: <strong className="ml-1">{v}</strong>
+                      </span>
+                    ))}
+                    {Object.keys(stats.summary.subscriptionsByPlan).length === 0 && <span className="text-zinc-500 text-sm">—</span>}
+                  </div>
+                </div>
+                <div className="text-sm text-zinc-400">
+                  Logged-in usage rows: <span className="font-mono">{stats.summary.usageRowsCount}</span>
+                </div>
               </div>
             </section>
 

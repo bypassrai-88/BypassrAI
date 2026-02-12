@@ -16,19 +16,83 @@ export async function GET(request: NextRequest) {
   try {
     const admin = createAdminClient();
 
+    const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
     const [
       profilesRes,
       subsRes,
       usageRes,
       anonRes,
       recentProfilesRes,
+      subsWithUserRes,
+      usageByUserRes,
+      anonEventsForChartRes,
     ] = await Promise.all([
       admin.from("profiles").select("*", { count: "exact", head: true }),
       admin.from("subscriptions").select("status, plan"),
       admin.from("usage").select("words_used"),
       admin.from("anonymous_usage").select("uses_count, words_used"),
       admin.from("profiles").select("id, email, created_at, trial_used").order("created_at", { ascending: false }).limit(50),
+      admin.from("subscriptions").select("user_id, status, plan, current_period_end").order("current_period_end", { ascending: false }),
+      admin.from("usage").select("user_id, words_used"),
+      Promise.resolve(admin.from("anonymous_usage_events").select("created_at").gte("created_at", fourteenDaysAgo)).catch(() => ({ data: [] as { created_at?: string }[] })),
     ]);
+
+    const subsWithUser = (subsWithUserRes as { data?: { user_id?: string; status?: string; plan?: string; current_period_end?: string }[] }).data ?? [];
+    const usageByUserRows = (usageByUserRes as { data?: { user_id?: string; words_used?: number }[] }).data ?? [];
+    const anonEventsForChart = (anonEventsForChartRes as { data?: { created_at?: string }[] }).data ?? [];
+
+    // Top users by total words (sum across periods)
+    const wordsByUser = usageByUserRows.reduce<Record<string, number>>((acc, r) => {
+      const uid = r.user_id ?? "";
+      if (!uid) return acc;
+      acc[uid] = (acc[uid] ?? 0) + (Number(r.words_used) || 0);
+      return acc;
+    }, {});
+    const topUserIds = Object.entries(wordsByUser)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 15)
+      .map(([id]) => id);
+
+    // Fetch emails for subscription users and top users
+    const idsForEmail = [...new Set([...subsWithUser.map((s) => s.user_id).filter(Boolean), ...topUserIds])];
+    let emailByUserId: Record<string, string> = {};
+    if (idsForEmail.length > 0) {
+      const { data: profileRows } = await admin.from("profiles").select("id, email").in("id", idsForEmail);
+      const profiles = (profileRows ?? []) as { id: string; email?: string }[];
+      profiles.forEach((p) => {
+        emailByUserId[p.id] = p.email ?? "—";
+      });
+    }
+
+    const subscriptionsWithEmail = subsWithUser.map((s) => ({
+      user_id: s.user_id,
+      email: emailByUserId[s.user_id ?? ""] ?? "—",
+      status: s.status ?? "—",
+      plan: s.plan ?? "—",
+      current_period_end: s.current_period_end ?? null,
+    }));
+
+    const topUsersByWords = topUserIds.map((id) => ({
+      user_id: id,
+      email: emailByUserId[id] ?? "—",
+      words_used: wordsByUser[id] ?? 0,
+    }));
+
+    // Anonymous uses by day (last 14 days, UTC)
+    const dayCounts: Record<string, number> = {};
+    for (let d = 13; d >= 0; d--) {
+      const date = new Date();
+      date.setUTCDate(date.getUTCDate() - d);
+      const key = date.toISOString().slice(0, 10);
+      dayCounts[key] = 0;
+    }
+    anonEventsForChart.forEach((e) => {
+      const day = (e.created_at ?? "").slice(0, 10);
+      if (day && dayCounts.hasOwnProperty(day)) dayCounts[day]++;
+    });
+    const anonByDay = Object.entries(dayCounts)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, uses]) => ({ date, uses }));
 
     const profileCount = (profilesRes as { count?: number }).count ?? 0;
     const subscriptions = subsRes.data ?? [];
@@ -125,6 +189,9 @@ export async function GET(request: NextRequest) {
         usageRowsCount: usageRows.length,
       },
       anonymousByPeriod: anonByPeriod,
+      anonByDay,
+      subscriptionsWithEmail,
+      topUsersByWords,
       recentProfiles: recentProfiles.map((p) => ({
         id: (p as { id: string }).id,
         email: (p as { email?: string }).email,

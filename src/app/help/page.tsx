@@ -67,12 +67,43 @@ export default function HelpPage() {
             </div>
           ))}
         </dl>
-        <div className="mt-12 flex flex-wrap gap-4">
+        <div className="mt-10 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <h2 className="font-semibold text-neutral-900">Guides & articles</h2>
+          <ul className="mt-3 space-y-2">
+            <li>
+              <Link href="/help/humanize-ai-text-for-school" className="text-primary-600 hover:underline">
+                How to humanize AI text for school
+              </Link>
+            </li>
+            <li>
+              <Link href="/help/bypass-turnitin" className="text-primary-600 hover:underline">
+                How to bypass Turnitin AI detection
+              </Link>
+            </li>
+            <li>
+              <Link href="/help/ai-detector-tips" className="text-primary-600 hover:underline">
+                AI detector tips: pass AI detection
+              </Link>
+            </li>
+            <li>
+              <Link href="/help/how-it-works" className="text-primary-600 hover:underline">
+                How it works
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div className="mt-8 flex flex-wrap gap-4">
           <Link
-            href="/help/how-it-works"
+            href="/humanize"
             className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
           >
-            How it works
+            Try Humanizer
+          </Link>
+          <Link
+            href="/pricing"
+            className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+          >
+            Pricing
           </Link>
           <Link
             href="/contact"

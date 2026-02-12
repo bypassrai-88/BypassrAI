@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function requireAdminSecret(request: NextRequest): boolean {
-  const secret = process.env.ADMIN_SECRET;
+  const secret = process.env.ADMIN_SECRET?.trim();
   if (!secret) return false;
-  const provided = request.nextUrl.searchParams.get("secret") ?? request.headers.get("x-admin-secret");
-  return provided === secret;
+  const provided = (request.nextUrl.searchParams.get("secret") ?? request.headers.get("x-admin-secret") ?? "").trim();
+  return provided.length > 0 && secret === provided;
 }
 
 export async function GET(request: NextRequest) {
   if (!requireAdminSecret(request)) {
-    return NextResponse.json({ error: "Unauthorized. Set ADMIN_SECRET in .env.local and pass ?secret=... or x-admin-secret header." }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   try {

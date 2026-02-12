@@ -71,11 +71,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 p-6">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-2">Admin console</h1>
-        <p className="text-zinc-400 text-sm mb-6">
-          Run locally and set <code className="bg-zinc-800 px-1 rounded">ADMIN_SECRET</code> in{" "}
-          <code className="bg-zinc-800 px-1 rounded">.env.local</code>. Use the same value below to view stats.
-        </p>
+        <h1 className="text-2xl font-semibold mb-6">Admin console</h1>
 
         {!stats ? (
           <div className="space-y-3">

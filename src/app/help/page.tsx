@@ -2,8 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Help & FAQ — BypassrAI",
-  description: "Frequently asked questions about humanizing AI text and bypassing detectors.",
+  title: "Help & FAQ — AI Humanizer & Bypass AI | Bypassr AI",
+  description:
+    "FAQ: humanize AI text, bypass AI detection, use the AI humanizer. Bypassr AI help and tips.",
 };
 
 const faqs = [

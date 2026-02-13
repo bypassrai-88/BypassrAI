@@ -8,15 +8,15 @@ import { QuotaModalProvider } from "@/components/QuotaModalContext";
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bypassrai.com";
 
 export const metadata: Metadata = {
-  title: "BypassrAI — Humanize AI Text & Bypass AI Detectors",
+  title: "Bypassr AI — AI Humanizer to Humanize AI Text & Bypass AI Detection",
   description:
-    "Convert AI-generated content into human-sounding text that passes every AI detection tool. Humanize, paraphrase, and check AI score.",
+    "Free AI humanizer: humanize AI writing and bypass AI detectors. Bypassr AI turns ChatGPT and AI text into natural, undetectable content. Humanize AI, check AI score, pass Turnitin.",
   metadataBase: new URL(siteUrl),
   icons: { icon: "/favicon.png" },
   openGraph: {
-    title: "BypassrAI — Humanize AI Text & Bypass AI Detectors",
+    title: "Bypassr AI — AI Humanizer to Humanize AI Text & Bypass AI Detection",
     description:
-      "Convert AI-generated content into human-sounding text that passes every AI detection tool. Humanize, paraphrase, and check AI score.",
+      "Free AI humanizer: humanize AI writing and bypass AI detectors. Turn ChatGPT text into natural, undetectable content. Try free.",
     url: siteUrl,
     siteName: "BypassrAI",
     images: [{ url: "/favicon.png", width: 512, height: 512, alt: "BypassrAI" }],
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "BypassrAI — Humanize AI Text & Bypass AI Detectors",
+    title: "Bypassr AI — AI Humanizer to Humanize AI Text & Bypass AI",
     description:
-      "Humanize AI text so it passes every AI detector. Try free.",
+      "AI humanizer: humanize AI text and bypass AI detection. Try free.",
   },
 };
 

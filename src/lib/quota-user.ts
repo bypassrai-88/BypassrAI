@@ -20,11 +20,37 @@ export type UserQuotaResult =
   | { allowed: true; periodStart: string }
   | { allowed: false; status: number; error: string };
 
+/** If set, this email gets premium access without paying (e.g. owner account). */
+const ADMIN_PREMIUM_EMAIL = process.env.ADMIN_PREMIUM_EMAIL?.trim() || "";
+
 /**
  * Get subscription for user; if trial has ended, do lazy conversion (expire or convert to regular).
+ * If ADMIN_PREMIUM_EMAIL is set and the user's email matches, returns a synthetic premium subscription.
  */
 export async function getSubscription(userId: string): Promise<SubscriptionRow | null> {
   const supabase = createAdminClient();
+
+  if (ADMIN_PREMIUM_EMAIL) {
+    const { data: profile } = await supabase.from("profiles").select("email").eq("id", userId).maybeSingle();
+    const email = (profile as { email?: string } | null)?.email ?? "";
+    if (email.toLowerCase() === ADMIN_PREMIUM_EMAIL.toLowerCase()) {
+      const now = new Date();
+      const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const periodEnd = new Date(periodStart);
+      periodEnd.setFullYear(periodEnd.getFullYear() + 10);
+      return {
+        id: "admin-premium",
+        user_id: userId,
+        status: "active",
+        plan: "premium",
+        words_included: PREMIUM_WORDS,
+        current_period_start: periodStart.toISOString(),
+        current_period_end: periodEnd.toISOString(),
+        cancel_at_period_end: false,
+      };
+    }
+  }
+
   const { data: sub } = await supabase
     .from("subscriptions")
     .select("id, user_id, status, plan, words_included, current_period_start, current_period_end, cancel_at_period_end")

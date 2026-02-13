@@ -2,14 +2,14 @@ import Link from "next/link";
 
 const products = [
   { href: "/humanize", label: "AI Humanizer" },
-  { href: "/ai-check", label: "AI Detector" },
+  { href: "/essay-writer", label: "Essay Writer" },
 ];
 
 const tools = [
-  { href: "/paraphrase", label: "Paraphraser" },
   { href: "/grammar-checker", label: "Grammar checker" },
   { href: "/summarizer", label: "Summarizer" },
   { href: "/translator", label: "Translator" },
+  { href: "/ai-check", label: "AI Detector" },
 ];
 
 const resources = [

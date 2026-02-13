@@ -3,8 +3,9 @@ import { ToolWithQuotaLimit } from "@/components/ToolWithQuotaLimit";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Detector — BypassrAI",
-  description: "Check if your text is flagged as AI-written. See AI score and flagged phrases.",
+  title: "AI Detector — Check & Bypass AI Detection | Bypassr AI",
+  description:
+    "Check if your text is flagged as AI. See AI score and flagged phrases. Then use our AI humanizer to humanize AI text and bypass AI detection.",
 };
 
 export default function AICheckPage() {

@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { StartTrialButton, PlanCheckoutButton, PricingFooter } from "@/components/PricingCTA";
 
 export const metadata: Metadata = {
-  title: "Pricing — BypassrAI",
-  description: "Simple, transparent pricing. Start free, then choose Lite, Pro, or Premium. Humanize, paraphrase, and bypass AI detection.",
+  title: "Pricing — AI Humanizer Plans | Bypassr AI",
+  description:
+    "Pricing for Bypassr AI humanizer. Humanize AI text and bypass AI detection with Lite, Pro, or Premium. Free trial. Cancel anytime.",
 };
 
 const paidPlans = [

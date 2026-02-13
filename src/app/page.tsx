@@ -59,8 +59,8 @@ const testimonials = [
 ];
 
 const faqs = [
-  { q: "How does BypassrAI work?", a: "You paste your text, optionally check the AI score, then click Humanize. Our engine rewrites the content to sound natural while keeping your meaning." },
-  { q: "Does it bypass Turnitin and other AI checkers?", a: "We test against leading detectors and update our system regularly. Results vary by detector; we aim for human-like output." },
+  { q: "How does the AI humanizer work?", a: "You paste your text, optionally check the AI score, then click Humanize. Our engine rewrites the content to sound natural while keeping your meaning. Humanize AI text in one click." },
+  { q: "Can I bypass AI detection and Turnitin?", a: "We test against leading detectors (Turnitin, GPTZero, etc.) and update our system regularly. Use our AI humanizer to bypass AI detection; results vary by detector." },
   { q: "How much does it cost?", a: "Try it free. Sign up for a 7-day free trial or a monthly plan for more. Cancel anytime." },
   { q: "What languages are supported?", a: "English is fully supported. More languages may be added later." },
 ];
@@ -77,11 +77,10 @@ export default function HomePage() {
             Trusted by 1,000,000+ users
           </p>
           <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
-            <span className="text-gradient">Humanize</span> AI Text & Outsmart Detectors
+            <span className="text-gradient">Humanize</span> AI Text & Bypass AI Detection
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-lg text-neutral-600">
-            Turn ChatGPT and other AI drafts into natural, undetectable writing—so it passes
-            every AI checker.
+            Free AI humanizer: turn ChatGPT and AI drafts into natural, undetectable writing. Humanize AI content and bypass every AI checker.
           </p>
           <HeroCTA />
         </div>
@@ -113,7 +112,7 @@ export default function HomePage() {
             Humanize AI Writing in 3 Simple Steps
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-neutral-600">
-            Perfect for essays, assignments, blog posts and research papers
+            Use our AI humanizer for essays, assignments, blog posts and research papers. Bypass AI detectors easily.
           </p>
           <div className="mt-12 grid gap-8 sm:grid-cols-3">
             {steps.map((s) => (
@@ -184,11 +183,11 @@ export default function HomePage() {
       <section className="bg-white py-16 sm:py-24">
         <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
           <h2 className="text-3xl font-bold text-neutral-900">
-            Make Your Text Sound Human — Instantly
+            AI Humanizer — Make Your Text Sound Human Instantly
           </h2>
           <p className="mt-4 text-neutral-600">
             Turn robotic, AI-generated content into clear, natural writing. Whether it's from
-            ChatGPT or another tool, BypassrAI helps you bypass AI detectors in one click.
+            ChatGPT or another tool, Bypassr AI helps you bypass AI detectors in one click.
           </p>
           <FinalCTA />
         </div>

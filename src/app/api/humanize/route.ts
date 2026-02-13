@@ -11,7 +11,7 @@ import {
   checkUserQuota,
   incrementUserUsage,
 } from "@/lib/quota-user";
-import { HUMANIZE_SYSTEM } from "@/lib/prompts";
+import { HUMANIZE_SYSTEM, HUMANIZE_REFINE_SYSTEM } from "@/lib/prompts";
 import { humanizerPreprocess, humanizerPostProcess } from "@/lib/humanizer-pipeline";
 
 /** Remove duplicate output if model repeated itself */
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     user = data.user;
   } catch (_) {}
 
-  let body: { text?: string };
+  let body: { text?: string; refine?: boolean };
   try {
     body = await request.json();
   } catch {
@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
   }
 
   const text = typeof body.text === "string" ? body.text.trim() : "";
+  const refine = body.refine === true;
   if (!text) {
     return NextResponse.json({ error: "Missing or empty text." }, { status: 400 });
   }
@@ -97,15 +98,17 @@ export async function POST(request: NextRequest) {
 
     const anthropic = new Anthropic({ apiKey });
 
-    // Pre-process: splice texture/punctuation/words so input is less "perfect" before Claude
-    const textForClaude = humanizerPreprocess(text);
+    // Pre-process: skip or lighten when refining (text already humanized once)
+    const textForClaude = refine ? text : humanizerPreprocess(text);
 
-    // Call Claude: paraphrase and humanize (formal–neutral, no filler, varied structure)
+    const systemPrompt = refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
+
+    // Call Claude: high temperature + perplexity for human-like variation
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
-      temperature: 0.7,
-      system: HUMANIZE_SYSTEM,
+      temperature: 1.0,
+      system: systemPrompt,
       messages: [{ role: "user", content: textForClaude }],
     });
 

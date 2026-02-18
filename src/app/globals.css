@@ -4,16 +4,73 @@
 
 :root {
   --foreground: #0a0a0a;
-  --background: #fafafa;
+  --background: #f5f5f7;
   --primary: #16a34a;
   --primary-hover: #15803d;
   --card: #ffffff;
-  --border: #e5e5e5;
+  --border: #e8e8ed;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-2xl: 40px;
+  --shadow-soft: 0 2px 20px -4px rgba(0, 0, 0, 0.08);
+  --shadow-bubble: 0 4px 24px -4px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --glass: rgba(255, 255, 255, 0.72);
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scroll-reveal animations */
+.scroll-reveal-fade-up,
+.scroll-reveal-fade-in,
+.scroll-reveal-scale,
+.scroll-reveal-slide-left,
+.scroll-reveal-slide-right {
+  opacity: 0;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-reveal-fade-up {
+  transform: translateY(28px);
+}
+.scroll-reveal-fade-up.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-fade-in.scroll-reveal-visible {
+  opacity: 1;
+}
+
+.scroll-reveal-scale {
+  transform: scale(0.96);
+}
+.scroll-reveal-scale.scroll-reveal-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.scroll-reveal-slide-left {
+  transform: translateX(24px);
+}
+.scroll-reveal-slide-left.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-slide-right {
+  transform: translateX(-24px);
+}
+.scroll-reveal-slide-right.scroll-reveal-visible {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 @layer utilities {
@@ -25,12 +82,24 @@ body {
     background-image: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%);
   }
   .bg-hero-gradient {
-    background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 50%, #fafafa 100%);
+    background: linear-gradient(180deg, #f0fdf4 0%, #f5f5f7 45%, #ffffff 100%);
   }
   .bg-header-gradient {
-    background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
   .bg-page-gradient {
-    background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 30%, #fafafa 100%);
+    background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 25%, #f5f5f7 100%);
+  }
+  .card-bubble {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-bubble);
+    background: var(--card);
+  }
+  .glass-panel {
+    background: var(--glass);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
 }

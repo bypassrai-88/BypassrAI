@@ -209,9 +209,9 @@ export function StartFreeTrialLink({
 }
 
 const heroCtaClass =
-  "inline-flex shrink-0 rounded-xl bg-primary-600 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-600/25 transition hover:bg-primary-700";
+  "inline-flex shrink-0 rounded-full bg-primary-600 px-8 py-4 text-base font-semibold text-white shadow-bubble transition hover:bg-primary-700 hover:shadow-bubble-lg";
 const finalCtaClass =
-  "mt-6 inline-flex rounded-xl bg-primary-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-600/25 hover:bg-primary-700";
+  "mt-6 inline-flex rounded-full bg-primary-600 px-8 py-4 text-base font-semibold text-white shadow-bubble transition hover:bg-primary-700 hover:shadow-bubble-lg";
 
 /** Hero CTA: Use the AI Humanizer. Try free; we prompt to sign in / free trial when limit is reached. */
 export function HeroCTA() {

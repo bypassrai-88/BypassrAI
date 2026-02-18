@@ -78,7 +78,7 @@ export function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-primary-100/80 bg-header-gradient shadow-sm shadow-primary-900/5 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-neutral-200/60 bg-header-gradient shadow-soft">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="flex items-center font-bold text-neutral-900">
           <span className="bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">Bypassr</span><span className="text-neutral-700">AI</span>
@@ -89,8 +89,8 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`rounded px-3 py-2 text-sm font-medium transition-colors hover:text-primary-600 ${
-                pathname === link.href ? "text-primary-600" : "text-neutral-600"
+              className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-100 hover:text-primary-600 ${
+                pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-600"
               }`}
             >
               {link.label}
@@ -101,8 +101,8 @@ export function Header() {
             <button
               type="button"
               onClick={() => setToolsOpen((o) => !o)}
-              className={`flex items-center gap-1 rounded px-3 py-2 text-sm font-medium transition-colors hover:text-primary-600 ${
-                isToolsActive(pathname) ? "text-primary-600" : "text-neutral-600"
+              className={`flex items-center gap-1 rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-100 hover:text-primary-600 ${
+                isToolsActive(pathname) ? "bg-primary-50 text-primary-600" : "text-neutral-600"
               }`}
               aria-expanded={toolsOpen}
               aria-haspopup="true"
@@ -118,12 +118,12 @@ export function Header() {
               </svg>
             </button>
             {toolsOpen && (
-              <div className="absolute left-0 top-full z-50 mt-1 min-w-[180px] rounded-xl border border-primary-100 bg-white py-1 shadow-lg shadow-primary-900/5">
+              <div className="absolute left-0 top-full z-50 mt-2 min-w-[200px] rounded-2xl border border-neutral-200/80 bg-white/95 py-2 shadow-bubble-lg backdrop-blur-xl">
                 {toolsDropdownLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`block px-4 py-2 text-sm transition-colors hover:bg-neutral-50 hover:text-primary-600 ${
+                    className={`mx-2 block rounded-xl px-4 py-2.5 text-sm transition-colors hover:bg-neutral-50 hover:text-primary-600 ${
                       pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700"
                     }`}
                   >
@@ -138,8 +138,8 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`rounded px-3 py-2 text-sm font-medium transition-colors hover:text-primary-600 ${
-                pathname === link.href ? "text-primary-600" : "text-neutral-600"
+              className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-100 hover:text-primary-600 ${
+                pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-600"
               }`}
             >
               {link.label}
@@ -154,11 +154,11 @@ export function Header() {
               <>
                 <Link
                   href="/account"
-                  className="text-sm font-medium text-neutral-600 transition-colors hover:text-primary-600"
+                  className="rounded-2xl px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-primary-600"
                 >
                   Account
                 </Link>
-                <span className="text-sm text-neutral-400" title={userEmail}>
+                <span className="rounded-2xl bg-neutral-100 px-3 py-2 text-sm text-neutral-500" title={userEmail}>
                   {username ?? userEmail.replace(/(.{2}).*(@.*)/, "$1…$2")}
                 </span>
               </>
@@ -166,13 +166,13 @@ export function Header() {
               <>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-neutral-600 transition-colors hover:text-neutral-900"
+                  className="rounded-2xl px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-primary-600/25 transition hover:bg-primary-700"
+                  className="rounded-full bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-bubble transition hover:bg-primary-700 hover:shadow-bubble-lg"
                 >
                   Try for free
                 </Link>
@@ -184,7 +184,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((o) => !o)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+            className="md:hidden flex items-center justify-center w-11 h-11 rounded-2xl text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
           >
@@ -203,13 +203,13 @@ export function Header() {
 
       {/* Mobile menu dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute left-0 right-0 top-16 z-40 border-b border-primary-100/80 bg-white shadow-lg backdrop-blur">
+        <div className="md:hidden absolute left-0 right-0 top-16 z-40 border-b border-neutral-200/60 bg-white/95 shadow-bubble-lg backdrop-blur-xl">
           <nav className="mx-auto max-w-6xl px-4 py-4 flex flex-col gap-1">
             {mainNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                className={`rounded-2xl px-4 py-3.5 text-sm font-medium transition-colors ${
                   pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
                 }`}
               >
@@ -222,7 +222,7 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`block rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  className={`block rounded-2xl px-4 py-3.5 text-sm font-medium transition-colors ${
                     pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
                   }`}
                 >
@@ -234,7 +234,7 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                className={`rounded-2xl px-4 py-3.5 text-sm font-medium transition-colors ${
                   pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
                 }`}
               >
@@ -245,7 +245,7 @@ export function Header() {
               {userEmail ? (
                 <Link
                   href="/account"
-                  className="block rounded-lg px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                  className="block rounded-2xl px-4 py-3.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                 >
                   Account
                 </Link>
@@ -253,13 +253,13 @@ export function Header() {
                 <>
                   <Link
                     href="/login"
-                    className="block rounded-lg px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+                    className="block rounded-2xl px-4 py-3.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                   >
                     Log in
                   </Link>
                   <Link
                     href="/signup"
-                    className="mx-4 mt-2 block rounded-xl bg-primary-600 py-3 text-center text-sm font-semibold text-white"
+                    className="mt-2 block rounded-full bg-primary-600 py-3.5 text-center text-sm font-semibold text-white"
                   >
                     Try for free
                   </Link>

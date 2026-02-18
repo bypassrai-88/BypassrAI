@@ -58,11 +58,15 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
     setLoading(true);
     try {
       const supabase = createClient();
-      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      // Prefer production URL so OAuth redirect never goes to localhost when on live site
+      const origin =
+        (typeof window !== "undefined" && window.location.origin) ||
+        (process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? "");
+      const redirectTo = `${origin || "https://bypassrai.com"}/auth/callback?next=/account`;
       const { error: err } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${origin}/auth/callback?next=/account`,
+          redirectTo,
         },
       });
       if (err) {

@@ -26,9 +26,15 @@ function defaultUsernameFromOAuth(user: { user_metadata?: Record<string, unknown
 }
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/account";
+  // Use request URL origin; fallback to production so we never redirect to localhost from prod
+  const requestUrl = new URL(request.url);
+  const origin =
+    requestUrl.origin ||
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+    "https://bypassrai.com";
 
   if (code) {
     const supabase = await createClient();

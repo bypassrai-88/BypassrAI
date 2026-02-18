@@ -69,6 +69,16 @@ Google requires a “consent screen” before you can create OAuth keys.
 
 The redirect URL is already set on the Google side (Step 4.5). Supabase’s Google provider uses `https://YOUR_PROJECT.supabase.co/auth/v1/callback` by default, so you don’t add a redirect in the Supabase Google provider screen—only in Google Cloud Console.
 
+### Step 5b: Allow your app’s callback URL (required for this app)
+
+So that users are sent back to your Next.js app after Google sign-in:
+
+1. In Supabase go to **Authentication** → **URL Configuration**.
+2. Under **Redirect URLs**, add:
+   - `http://localhost:3000/auth/callback` (for local dev)
+   - `https://yourdomain.com/auth/callback` (for production, e.g. `https://bypassrai.com/auth/callback`)
+3. Save. The app uses `signInWithOAuth({ options: { redirectTo: origin + '/auth/callback?next=/account' } })`, so this URL must be allowed.
+
 ---
 
 ## Summary

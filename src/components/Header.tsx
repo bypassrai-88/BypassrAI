@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const mainNavLinks = [
-  { href: "/humanize", label: "AI Humanizer" },
+  { href: "/humanize", label: "AI Humanizer", beta: true },
   { href: "/essay-writer", label: "Essay Writer" },
 ];
 
@@ -89,11 +89,14 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-100 hover:text-primary-600 ${
+              className={`rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-100 hover:text-primary-600 inline-flex items-center gap-1.5 ${
                 pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-600"
               }`}
             >
               {link.label}
+              {"beta" in link && link.beta && (
+                <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">BETA</span>
+              )}
             </Link>
           ))}
 
@@ -209,11 +212,14 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-2xl px-4 py-3.5 text-sm font-medium transition-colors ${
+                className={`rounded-2xl px-4 py-3.5 text-sm font-medium transition-colors inline-flex items-center gap-1.5 ${
                   pathname === link.href ? "bg-primary-50 text-primary-600" : "text-neutral-700 hover:bg-neutral-50"
                 }`}
               >
                 {link.label}
+                {"beta" in link && link.beta && (
+                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">BETA</span>
+                )}
               </Link>
             ))}
             <div className="border-t border-neutral-100 pt-2 mt-1">

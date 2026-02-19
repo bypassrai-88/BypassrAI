@@ -33,6 +33,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - `docs/AI_PROVIDERS.md` — **Humanizer model choice (Claude 3.5 Sonnet vs GPT-4o-mini), AI detector APIs vs DIY with LLM**
 - `docs/PRICING_RESEARCH.md` — **Competitor free/paid/tiers research; recommended: 250 free, 2K trial, $9/mo 10K words**
 - `scripts/test-humanizer-models.mjs` — **Run sample text through OpenAI + Anthropic models; compare output and cost** (set `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`; run `node --env-file=.env.local scripts/test-humanizer-models.mjs`)
+- `scripts/optimize-humanizer.mjs` — Run sample through humanizer; optional GPTZero API score if `GPTZERO_API_KEY` set.
+- **Optimizer loop (no API key):** Run `optimizer-run.mjs` → paste output into GPTZero → report % human → we log score and adjust pipeline → repeat. Spreadsheet: `scripts/optimizer-runs.csv`. Save/restore best pipeline with `optimizer-save-best.mjs` / `optimizer-restore-best.mjs`. Full steps: **`docs/OPTIMIZER_LOOP.md`**
 
 ## Next steps
 

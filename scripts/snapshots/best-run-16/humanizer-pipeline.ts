@@ -587,7 +587,7 @@ function postprocessCommaSplits(text: string): string {
 /** Post clause reorder: "Because X, Y" → "Y because X" etc. */
 function postprocessClauseReorder(text: string): string {
   let result = text;
-  const reorders: [RegExp, (m: string, a: string, b: string) => string][] = [
+  const reorders: [RegExp, (m: string, a: string, b: string, p: string) => string][] = [
     [/Because\s+([^,]+),\s*([^.!?]+)([.!?])/gi, (_, a, b, p) => `${b.trim().charAt(0).toLowerCase() + b.trim().slice(1)} because ${a.trim().toLowerCase()}${p}`],
     [/When\s+([^,]+),\s*([^.!?]+)([.!?])/gi, (_, a, b, p) => `${b.trim().charAt(0).toLowerCase() + b.trim().slice(1)} when ${a.trim().toLowerCase()}${p}`],
     [/Although\s+([^,]+),\s*([^.!?]+)([.!?])/gi, (_, a, b, p) => `${b.trim().charAt(0).toLowerCase() + b.trim().slice(1)} although ${a.trim().toLowerCase()}${p}`],

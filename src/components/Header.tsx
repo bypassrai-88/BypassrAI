@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 const mainNavLinks = [
-  { href: "/humanize", label: "AI Humanizer", beta: true },
+  { href: "/humanize", label: "AI Humanizer", badge: "V2" },
   { href: "/essay-writer", label: "Essay Writer" },
 ];
 
@@ -94,9 +94,9 @@ export function Header() {
               }`}
             >
               {link.label}
-              {"beta" in link && link.beta && (
-                <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">BETA</span>
-              )}
+              {("badge" in link && link.badge) || ("beta" in link && link.beta) ? (
+                <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">{(link as { badge?: string }).badge ?? "BETA"}</span>
+              ) : null}
             </Link>
           ))}
 
@@ -217,9 +217,9 @@ export function Header() {
                 }`}
               >
                 {link.label}
-                {"beta" in link && link.beta && (
-                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">BETA</span>
-                )}
+                {("badge" in link && link.badge) || ("beta" in link && link.beta) ? (
+                  <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800">{(link as { badge?: string }).badge ?? "BETA"}</span>
+                ) : null}
               </Link>
             ))}
             <div className="border-t border-neutral-100 pt-2 mt-1">

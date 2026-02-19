@@ -4,7 +4,7 @@ We use a **fixed sample text** and run it through our humanizer over and over. Y
 
 No GPTZero API key required: you score in the browser; we use the numbers to drive changes.
 
-**BETA:** The current live humanizer is marked as **BETA** in the UI. The pipeline that gave our best result so far (run #15: 7% human / 89% AI on GPTZero) is saved as the best snapshot; we stay on that track unless a later run beats it.
+The current live humanizer is marked as **V2** in the UI. The pipeline that gave our best result so far (run #15: 7% human / 89% AI on GPTZero) is saved as the best snapshot; we stay on that track unless a later run beats it.
 
 ---
 

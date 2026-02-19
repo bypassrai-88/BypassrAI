@@ -14,7 +14,7 @@ export default function HumanizePage() {
         <h1 className="text-3xl font-bold text-neutral-900 sm:text-4xl flex items-center gap-3 flex-wrap">
           <span className="text-gradient">AI Humanizer</span>
           <span className="rounded bg-amber-100 px-2 py-0.5 text-sm font-semibold text-amber-800 border border-amber-200">
-            BETA
+            V2
           </span>
         </h1>
         <p className="mt-2 text-neutral-600">

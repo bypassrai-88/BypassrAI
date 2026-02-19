@@ -16,7 +16,7 @@ const fs = await import("fs");
 const path = await import("path");
 
 const BASE_URL = process.env.HUMANIZER_BASE_URL || "http://localhost:3000";
-const FALLBACK_URL = "http://localhost:3001";
+const FALLBACK_PORTS = [3001, 3002, 3003, 3004, 3005];
 const DEV_HUMANIZE = `${BASE_URL}/api/dev/humanize-sample`;
 
 const DIR = path.resolve(process.cwd(), "scripts");
@@ -42,7 +42,8 @@ const SKIP_CLAUDE = process.env.SKIP_CLAUDE === "1" || process.argv.includes("--
 
 async function humanize(text, refine = false) {
   const urls = [DEV_HUMANIZE];
-  if (!process.env.HUMANIZER_BASE_URL) urls.push(`${FALLBACK_URL}/api/dev/humanize-sample`);
+  if (!process.env.HUMANIZER_BASE_URL)
+    FALLBACK_PORTS.forEach((port) => urls.push(`http://localhost:${port}/api/dev/humanize-sample`));
   let lastErr;
   const body = { text, refine, skipClaude: SKIP_CLAUDE };
   for (const url of urls) {

@@ -81,7 +81,7 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28">
           <ScrollReveal variant="fade-up" delay={0}>
             <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary-200/80 bg-white/80 px-4 py-1.5 text-sm font-semibold tracking-wide text-primary-700 shadow-soft backdrop-blur-sm">
-              Trusted by 1,000,000+ users
+              Trusted by writers worldwide
             </p>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={80}>

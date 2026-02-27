@@ -86,7 +86,7 @@ export default function HomePage() {
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={80}>
             <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
-              <span className="text-gradient">Humanize</span> AI Text & Bypass AI Detection
+              <span className="text-gradient">Bypassr AI</span> — Humanize AI Text & Bypass AI Detection
             </h1>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={160}>

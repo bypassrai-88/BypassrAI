@@ -30,6 +30,36 @@ export const metadata: Metadata = {
     description:
       "AI humanizer: humanize AI text and bypass AI detection. Try free.",
   },
+  keywords: [
+    "bypassr ai",
+    "bypass ai",
+    "AI humanizer",
+    "humanize AI text",
+    "bypass AI detection",
+    "Turnitin",
+    "GPTZero",
+  ],
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "Bypassr AI",
+      description: "AI humanizer to humanize AI text and bypass AI detection. Free tool to make ChatGPT and AI writing undetectable.",
+      potentialAction: { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/humanize?q={search_term_string}` }, "query-input": "required name=search_term_string" },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "Bypassr AI",
+      url: siteUrl,
+      logo: { "@type": "ImageObject", url: `${siteUrl}/favicon.png` },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -40,6 +70,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen flex flex-col font-sans antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-NE5X25N46K"
           strategy="afterInteractive"

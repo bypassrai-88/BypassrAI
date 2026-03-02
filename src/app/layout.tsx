@@ -11,13 +11,13 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bypassrai.com";
 export const metadata: Metadata = {
   title: "Bypassr AI — AI Humanizer to Humanize AI Text & Bypass AI Detection",
   description:
-    "Free AI humanizer: humanize AI writing and bypass AI detectors. Bypassr AI turns ChatGPT and AI text into natural, undetectable content. Humanize AI, check AI score, pass Turnitin.",
+    "AI humanizer to bypass Turnitin AI and other detectors. Humanize AI text from ChatGPT—free. Bypass AI detection, pass Turnitin, GPTZero. Bypassr AI makes AI writing undetectable.",
   metadataBase: new URL(siteUrl),
   icons: { icon: "/favicon.png" },
   openGraph: {
-    title: "Bypassr AI — AI Humanizer to Humanize AI Text & Bypass AI Detection",
+    title: "Bypassr AI — AI Humanizer to Bypass Turnitin AI & AI Detection",
     description:
-      "Free AI humanizer: humanize AI writing and bypass AI detectors. Turn ChatGPT text into natural, undetectable content. Try free.",
+      "Bypass Turnitin AI and other detectors. Humanize AI text from ChatGPT. Free AI humanizer to bypass AI detection. Try free.",
     url: siteUrl,
     siteName: "BypassrAI",
     images: [{ url: "/favicon.png", width: 512, height: 512, alt: "BypassrAI" }],
@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   keywords: [
     "bypassr ai",
     "bypass ai",
+    "bypassai",
+    "bypass turnitin ai",
+    "bypass turnitin ai detector",
     "AI humanizer",
     "humanize AI text",
     "bypass AI detection",
@@ -49,7 +52,7 @@ const jsonLd = {
       "@id": `${siteUrl}/#website`,
       url: siteUrl,
       name: "Bypassr AI",
-      description: "AI humanizer to humanize AI text and bypass AI detection. Free tool to make ChatGPT and AI writing undetectable.",
+      description: "AI humanizer to bypass Turnitin AI and AI detection. Humanize AI text from ChatGPT. Free tool to make AI writing undetectable.",
       potentialAction: { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/humanize?q={search_term_string}` }, "query-input": "required name=search_term_string" },
     },
     {

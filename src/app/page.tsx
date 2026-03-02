@@ -69,8 +69,22 @@ const faqs = [
 const detectors = ["Turnitin", "Copyleaks", "ZeroGPT", "Quillbot", "Grammarly", "GPTZero"];
 
 export default function HomePage() {
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+
   return (
     <div className="overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* Hero */}
       <section className="relative min-h-[85vh] overflow-hidden border-b border-neutral-200/80 bg-hero-gradient sm:min-h-[80vh]">
         {/* Soft floating blobs */}
@@ -91,7 +105,7 @@ export default function HomePage() {
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={160}>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600">
-              Free AI humanizer: turn ChatGPT and AI drafts into natural, undetectable writing. Humanize AI content and bypass every AI checker.
+              Free AI humanizer: bypass Turnitin AI and other detectors. Turn ChatGPT and AI drafts into natural, undetectable writing.
             </p>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={240}>
@@ -127,7 +141,7 @@ export default function HomePage() {
               Humanize AI Writing in 3 Simple Steps
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-center text-neutral-600">
-              Use our AI humanizer for essays, assignments, blog posts and research papers. Bypass AI detectors easily.
+              Use our AI humanizer for essays and assignments. Bypass Turnitin AI detector and other checkers easily.
             </p>
           </ScrollReveal>
           <div className="mt-16 grid gap-6 sm:grid-cols-3">

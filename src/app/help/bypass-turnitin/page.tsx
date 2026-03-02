@@ -2,9 +2,23 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "How to Bypass Turnitin AI Detection — BypassrAI",
+  title: "How to Bypass Turnitin AI Detection — Bypassr AI",
   description:
-    "Make your writing pass Turnitin’s AI detector. Humanize AI-generated text so it reads as human-written. Tips and tools that work.",
+    "Bypass Turnitin AI detector: humanize AI text so it passes. Use an AI humanizer to make AI writing read as human-written. Tips and tools that work.",
+  keywords: [
+    "bypass turnitin ai",
+    "bypass turnitin ai detector",
+    "turnitin AI detection",
+    "AI humanizer",
+    "humanize AI text",
+    "bypassr ai",
+  ],
+  openGraph: {
+    title: "How to Bypass Turnitin AI Detection — Bypassr AI",
+    description:
+      "Bypass Turnitin AI detector. Humanize AI text with an AI humanizer. Make your writing pass Turnitin.",
+    url: "/help/bypass-turnitin",
+  },
 };
 
 export default function BypassTurnitinPage() {

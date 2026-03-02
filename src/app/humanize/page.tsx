@@ -2,9 +2,23 @@ import { HumanizeClient } from "./HumanizeClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Humanizer — Humanize AI Text & Bypass AI Detection | Bypassr AI",
+  title: "AI Humanizer — Bypass Turnitin AI Detector & Humanize AI Text | Bypassr AI",
   description:
-    "Humanize AI text with our free AI humanizer. Bypass AI detection and pass Turnitin, GPTZero & more. Paste ChatGPT or AI writing and get human-like text in seconds.",
+    "Free AI humanizer: humanize AI text and bypass Turnitin AI detector, GPTZero & more. Paste ChatGPT or AI writing—get human-like text in seconds. Bypass AI detection.",
+  keywords: [
+    "AI humanizer",
+    "humanize AI text",
+    "bypass turnitin ai",
+    "bypass turnitin ai detector",
+    "bypass AI detection",
+    "bypassr ai",
+  ],
+  openGraph: {
+    title: "AI Humanizer — Bypass Turnitin AI & Humanize AI Text | Bypassr AI",
+    description:
+      "Humanize AI text and bypass Turnitin AI detector. Free AI humanizer for ChatGPT and AI writing. Get human-like text in seconds.",
+    url: "/humanize",
+  },
 };
 
 export default function HumanizePage() {
@@ -18,7 +32,7 @@ export default function HumanizePage() {
           </span>
         </h1>
         <p className="mt-2 text-neutral-600">
-          Use our AI humanizer to humanize AI text from ChatGPT or any tool. Bypass AI detection and get writing that sounds 100% human.
+          Use our AI humanizer to humanize AI text from ChatGPT or any tool. Bypass Turnitin AI detector, GPTZero, and other checkers—get writing that sounds 100% human.
         </p>
         <div className="mt-8">
           <HumanizeClient />

@@ -2,6 +2,10 @@
 
 So people can find you when they search **"bypassr ai"** or **"bypass ai"**, the site needs to be indexed and associated with those terms. Here’s what’s in place and what to do next.
 
+## Winning queries (Search Console)
+
+Optimized for these top queries: **bypass turnitin ai**, **ai humanizer**, **bypass turnitin ai detector**, **bypassai**. Key pages: homepage, `/humanize`, `/help/bypass-turnitin`. Meta titles, descriptions, keywords, and on-page copy target these terms; homepage also has FAQ schema for rich results.
+
 ## Already in place
 
 - **Meta title & description** include "Bypassr AI", "bypass AI", "AI humanizer" (root layout and key pages).

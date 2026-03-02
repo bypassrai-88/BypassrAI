@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/help/bypass-turnitin" },
   title: "How to Bypass Turnitin AI Detection — Bypassr AI",
   description:
     "Bypass Turnitin AI detector: humanize AI text so it passes. Use an AI humanizer to make AI writing read as human-written. Tips and tools that work.",

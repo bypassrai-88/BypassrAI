@@ -68,6 +68,8 @@ const faqs = [
 
 const detectors = ["Turnitin", "Copyleaks", "ZeroGPT", "Quillbot", "Grammarly", "GPTZero"];
 
+export const metadata = { alternates: { canonical: "/" } };
+
 export default function HomePage() {
   const faqSchema = {
     "@context": "https://schema.org",

@@ -2,6 +2,7 @@ import { HumanizeClient } from "./HumanizeClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/humanize" },
   title: "AI Humanizer — Bypass Turnitin AI Detector & Humanize AI Text | Bypassr AI",
   description:
     "Free AI humanizer: humanize AI text and bypass Turnitin AI detector, GPTZero & more. Paste ChatGPT or AI writing—get human-like text in seconds. Bypass AI detection.",

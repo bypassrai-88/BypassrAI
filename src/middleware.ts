@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
 
   if (isWww || isHttp) {
     const canonicalUrl = new URL(`https://${canonicalHost}${url.pathname}${url.search}`);
-    return NextResponse.redirect(canonicalUrl, 308);
+    return NextResponse.redirect(canonicalUrl, 301);
   }
 
   return NextResponse.next();

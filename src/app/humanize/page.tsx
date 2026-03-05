@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { HumanizeClient } from "./HumanizeClient";
 import type { Metadata } from "next";
 
@@ -34,6 +35,11 @@ export default function HumanizePage() {
         </h1>
         <p className="mt-2 text-neutral-600">
           Use our AI humanizer to humanize AI text from ChatGPT or any tool. Bypass Turnitin AI detector, GPTZero, and other checkers—get writing that sounds 100% human.
+        </p>
+        <p className="mt-3 text-sm text-neutral-500">
+          <Link href="/help/ai-detector-tips" className="font-medium text-primary-600 hover:underline">How to pass AI detection</Link>
+          {" · "}
+          <Link href="/help/bypass-turnitin" className="font-medium text-primary-600 hover:underline">How to bypass Turnitin</Link>
         </p>
         <div className="mt-8">
           <HumanizeClient />

@@ -8,6 +8,8 @@ Optimized for these top queries: **bypass turnitin ai**, **ai humanizer**, **byp
 
 **CTR for high-impression, zero-click queries:** We also optimized for queries that had many impressions but 0 clicks: **how to pass ai detection** (→ `/help/ai-detector-tips`: title/description with exact phrase + “free tool”), **how to bypass turnitin** / **bypass turnitin** / **how to get around turnitin** (→ `/help/bypass-turnitin`: title/description/keywords). Homepage has internal links with that anchor text to both guides.
 
+**Ranking (average position):** To help improve position we added: HowTo + BreadcrumbList schema on both key help pages; extra H2 content; keyword-rich footer links and links from /humanize to both guides; cross-links between the two help pages.
+
 ## Already in place
 
 - **Meta title & description** include "Bypassr AI", "bypass AI", "AI humanizer" (root layout and key pages).

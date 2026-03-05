@@ -1,6 +1,22 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bypassrai.com";
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to Pass AI Detection",
+  description: "How to pass AI detection: 3 tips plus a free humanizer. Make AI text pass GPTZero, Turnitin, and ZeroGPT.",
+  step: [
+    { "@type": "HowToStep", name: "Humanize before you submit", text: "Use an AI humanizer to rewrite AI-generated text so it reads more human and is less likely to be flagged." },
+    { "@type": "HowToStep", name: "Check your AI score first", text: "Paste your draft into an AI detector to see how AI it looks. If the score is high, humanize and check again." },
+    { "@type": "HowToStep", name: "Add your own voice", text: "After humanizing, edit the text yourself. Add sentences in your own style and vary paragraph length." },
+    { "@type": "HowToStep", name: "Don't rely on one detector", text: "Test with the detector your school or client uses. Aim for human-like overall rather than a single score." },
+  ],
+  url: `${siteUrl}/help/ai-detector-tips`,
+};
+
 export const metadata: Metadata = {
   alternates: { canonical: "/help/ai-detector-tips" },
   title: "How to Pass AI Detection — 3 Tips That Work (Free Tool) | Bypassr AI",
@@ -23,8 +39,18 @@ export const metadata: Metadata = {
 };
 
 export default function AiDetectorTipsPage() {
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Help", item: `${siteUrl}/help` },
+      { "@type": "ListItem", position: 2, name: "How to Pass AI Detection", item: `${siteUrl}/help/ai-detector-tips` },
+    ],
+  };
   return (
     <div className="border-b border-neutral-200 bg-page-gradient min-h-[60vh] py-12 sm:py-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <nav className="mb-6 text-sm text-neutral-500">
           <Link href="/help" className="hover:text-primary-600">Help</Link>
@@ -69,6 +95,11 @@ export default function AiDetectorTipsPage() {
             Different tools (GPTZero, Turnitin, ZeroGPT, Copyleaks, etc.) use different models. Text that passes one might still get flagged by another. Test with the detector your school or client uses if you can, and aim for “human-like” overall rather than a single score.
           </p>
 
+          <h2 className="text-xl font-semibold text-neutral-900 mt-8">Why do AI detectors flag my text?</h2>
+          <p className="text-neutral-600 mt-2">
+            Detectors look for patterns: similar sentence length, predictable word choice, and a lack of “messy” human variation. If you want to <strong>pass AI detection</strong>, you need to break those patterns — which is exactly what an AI humanizer does by rewording and varying structure while keeping your meaning.
+          </p>
+
           <div className="mt-10 rounded-xl border border-primary-200 bg-primary-50/30 p-6">
             <h2 className="text-lg font-semibold text-neutral-900">Humanize + detect in one place</h2>
             <p className="mt-2 text-neutral-600">
@@ -88,6 +119,9 @@ export default function AiDetectorTipsPage() {
 
         <p className="mt-10">
           <Link href="/help" className="text-sm text-primary-600 hover:underline">← Back to Help</Link>
+        </p>
+        <p className="mt-4 text-sm text-neutral-500">
+          Related: <Link href="/help/bypass-turnitin" className="font-medium text-primary-600 hover:underline">How to bypass Turnitin</Link>
         </p>
       </div>
     </div>

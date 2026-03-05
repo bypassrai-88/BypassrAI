@@ -17,8 +17,8 @@ const resources = [
   { href: "/help", label: "FAQ" },
   { href: "/help/how-it-works", label: "How it works" },
   { href: "/help/humanize-ai-text-for-school", label: "Humanize AI for school" },
-  { href: "/help/bypass-turnitin", label: "Bypass Turnitin" },
-  { href: "/help/ai-detector-tips", label: "AI detector tips" },
+  { href: "/help/bypass-turnitin", label: "How to bypass Turnitin" },
+  { href: "/help/ai-detector-tips", label: "How to pass AI detection" },
   { href: "/contact", label: "Contact" },
 ];
 

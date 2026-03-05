@@ -159,6 +159,11 @@ export default function HomePage() {
               </ScrollReveal>
             ))}
           </div>
+          <p className="mt-10 text-center text-neutral-600">
+            <Link href="/help/ai-detector-tips" className="font-medium text-primary-600 hover:underline">How to pass AI detection</Link>
+            {" · "}
+            <Link href="/help/bypass-turnitin" className="font-medium text-primary-600 hover:underline">How to bypass Turnitin</Link>
+          </p>
         </div>
       </section>
 

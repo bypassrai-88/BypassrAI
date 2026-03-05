@@ -6,6 +6,8 @@ So people can find you when they search **"bypassr ai"** or **"bypass ai"**, the
 
 Optimized for these top queries: **bypass turnitin ai**, **ai humanizer**, **bypass turnitin ai detector**, **bypassai**. Key pages: homepage, `/humanize`, `/help/bypass-turnitin`. Meta titles, descriptions, keywords, and on-page copy target these terms; homepage also has FAQ schema for rich results.
 
+**CTR for high-impression, zero-click queries:** We also optimized for queries that had many impressions but 0 clicks: **how to pass ai detection** (→ `/help/ai-detector-tips`: title/description with exact phrase + “free tool”), **how to bypass turnitin** / **bypass turnitin** / **how to get around turnitin** (→ `/help/bypass-turnitin`: title/description/keywords). Homepage has internal links with that anchor text to both guides.
+
 ## Already in place
 
 - **Meta title & description** include "Bypassr AI", "bypass AI", "AI humanizer" (root layout and key pages).

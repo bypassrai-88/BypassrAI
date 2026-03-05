@@ -3,21 +3,22 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/help/bypass-turnitin" },
-  title: "How to Bypass Turnitin AI Detection — Bypassr AI",
+  title: "How to Bypass Turnitin & Pass AI Detection (Free Tool) | Bypassr AI",
   description:
-    "Bypass Turnitin AI detector: humanize AI text so it passes. Use an AI humanizer to make AI writing read as human-written. Tips and tools that work.",
+    "How to bypass Turnitin and get around Turnitin AI detection: humanize your text with our free AI humanizer. Pass Turnitin — try 500 words free, no signup.",
   keywords: [
+    "how to bypass turnitin",
+    "bypass turnitin",
+    "how to get around turnitin",
     "bypass turnitin ai",
     "bypass turnitin ai detector",
-    "turnitin AI detection",
     "AI humanizer",
-    "humanize AI text",
     "bypassr ai",
   ],
   openGraph: {
-    title: "How to Bypass Turnitin AI Detection — Bypassr AI",
+    title: "How to Bypass Turnitin & Pass AI Detection | Bypassr AI",
     description:
-      "Bypass Turnitin AI detector. Humanize AI text with an AI humanizer. Make your writing pass Turnitin.",
+      "How to bypass Turnitin: humanize AI text so it passes. Free tool — try now.",
     url: "/help/bypass-turnitin",
   },
 };
@@ -32,10 +33,10 @@ export default function BypassTurnitinPage() {
           <span className="text-neutral-700">Bypass Turnitin</span>
         </nav>
         <h1 className="text-3xl font-bold text-neutral-900">
-          How to Bypass Turnitin AI Detection
+          How to Bypass Turnitin & Pass AI Detection
         </h1>
         <p className="mt-2 text-lg text-neutral-600">
-          Turnitin and other tools can flag AI-written text. Here’s how to humanize your writing so it’s less likely to be detected.
+          Wondering how to bypass Turnitin or get around Turnitin’s AI detector? Humanize your text so it passes. Free tool inside — no signup for 500 words.
         </p>
 
         <div className="mt-10 prose prose-neutral max-w-none">

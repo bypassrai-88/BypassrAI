@@ -78,12 +78,12 @@ export default function HelpPage() {
             </li>
             <li>
               <Link href="/help/bypass-turnitin" className="text-primary-600 hover:underline">
-                How to bypass Turnitin AI detection
+                How to bypass Turnitin
               </Link>
             </li>
             <li>
               <Link href="/help/ai-detector-tips" className="text-primary-600 hover:underline">
-                AI detector tips: pass AI detection
+                How to pass AI detection
               </Link>
             </li>
             <li>

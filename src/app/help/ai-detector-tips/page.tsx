@@ -2,9 +2,24 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "AI Detector Tips — How to Pass AI Detection — BypassrAI",
+  alternates: { canonical: "/help/ai-detector-tips" },
+  title: "How to Pass AI Detection — 3 Tips That Work (Free Tool) | Bypassr AI",
   description:
-    "Tips to pass AI detectors like GPTZero, Turnitin, and ZeroGPT. Humanize AI text, check your score, and make writing sound natural.",
+    "How to pass AI detection: humanize AI text so it passes GPTZero, Turnitin & ZeroGPT. Free humanizer + 3 tips. Try now — no signup for 500 words.",
+  keywords: [
+    "how to pass ai detection",
+    "pass AI detection",
+    "AI detector tips",
+    "bypass AI detection",
+    "AI humanizer",
+    "bypassr ai",
+  ],
+  openGraph: {
+    title: "How to Pass AI Detection — Free Tips & Tool | Bypassr AI",
+    description:
+      "How to pass AI detection: 3 tips + free humanizer. Make AI text undetectable. Try now.",
+    url: "/help/ai-detector-tips",
+  },
 };
 
 export default function AiDetectorTipsPage() {
@@ -17,10 +32,10 @@ export default function AiDetectorTipsPage() {
           <span className="text-neutral-700">AI detector tips</span>
         </nav>
         <h1 className="text-3xl font-bold text-neutral-900">
-          AI Detector Tips: How to Pass AI Detection
+          How to Pass AI Detection
         </h1>
         <p className="mt-2 text-lg text-neutral-600">
-          AI detectors look for patterns that suggest machine-generated text. Here’s how to improve your odds of passing and what tools can help.
+          AI detectors (GPTZero, Turnitin, ZeroGPT) look for machine-like patterns. Here’s how to pass AI detection: 3 tips plus a free humanizer that actually works.
         </p>
 
         <div className="mt-10 prose prose-neutral max-w-none">

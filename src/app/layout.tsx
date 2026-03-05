@@ -36,6 +36,8 @@ export const metadata: Metadata = {
     "bypassai",
     "bypass turnitin ai",
     "bypass turnitin ai detector",
+    "how to pass ai detection",
+    "how to bypass turnitin",
     "AI humanizer",
     "humanize AI text",
     "bypass AI detection",

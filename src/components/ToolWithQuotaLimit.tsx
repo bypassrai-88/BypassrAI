@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
 /**
  * Sets per-use word limit by plan:
@@ -19,9 +20,15 @@ export function ToolWithQuotaLimit({
   defaultWordLimit?: number;
   paidWordLimit?: number;
 }) {
-  const [wordLimit, setWordLimit] = useState(defaultWordLimit);
+  const [wordLimit, setWordLimit] = useState(() =>
+    isPortfolioMode() ? paidWordLimit : defaultWordLimit
+  );
 
   const refreshWordLimit = useCallback(() => {
+    if (isPortfolioMode()) {
+      setWordLimit(paidWordLimit);
+      return;
+    }
     fetch("/api/account")
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {

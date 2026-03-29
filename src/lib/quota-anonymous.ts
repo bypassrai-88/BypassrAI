@@ -1,9 +1,15 @@
 import type { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isPortfolioMode } from "@/config/site-variant";
+import { QUOTA_PORTFOLIO_PREFIX } from "@/lib/quota-messages";
+import { PORTFOLIO_FREE_WORDS_PER_MONTH } from "@/lib/quota-user";
 
 const COOKIE_NAME = "bypassrai_anon_id";
 const MAX_ANON_USES = 2;
 const MAX_ANON_WORDS_PER_USE = 500;
+/** Portfolio demo: generous caps without requiring sign-in (still abuse-bounded). */
+const MAX_ANON_USES_PORTFOLIO = 80;
+const MAX_ANON_WORDS_PORTFOLIO = 2500;
 
 export function countWords(text: string): number {
   const trimmed = text.trim();
@@ -38,12 +44,17 @@ export async function checkAnonymousQuota(
   wordCount: number
 ): Promise<AnonymousQuotaResult> {
   const { id: anonymousId, isNew } = getOrCreateAnonId(request);
+  const portfolio = isPortfolioMode();
+  const maxWordsPerUse = portfolio ? MAX_ANON_WORDS_PORTFOLIO : MAX_ANON_WORDS_PER_USE;
+  const maxUses = portfolio ? MAX_ANON_USES_PORTFOLIO : MAX_ANON_USES;
 
-  if (wordCount > MAX_ANON_WORDS_PER_USE) {
+  if (wordCount > maxWordsPerUse) {
     return {
       allowed: false,
       status: 400,
-      error: `Free tier allows up to ${MAX_ANON_WORDS_PER_USE} words per use. Create an account for more.`,
+      error: portfolio
+        ? `${QUOTA_PORTFOLIO_PREFIX} up to ${maxWordsPerUse.toLocaleString()} words per request. Try a shorter passage or sign in for a higher monthly total.`
+        : `Free tier allows up to ${MAX_ANON_WORDS_PER_USE} words per use. Create an account for more.`,
     };
   }
 
@@ -56,11 +67,13 @@ export async function checkAnonymousQuota(
       .maybeSingle();
 
     const usesCount = row?.uses_count ?? 0;
-    if (usesCount >= MAX_ANON_USES) {
+    if (usesCount >= maxUses) {
       return {
         allowed: false,
         status: 403,
-        error: "Create an account to use more.",
+        error: portfolio
+          ? `${QUOTA_PORTFOLIO_PREFIX} request limit reached (${maxUses} uses per browser). Sign in for up to ${PORTFOLIO_FREE_WORDS_PER_MONTH.toLocaleString()} words/month without a subscription, or try again later.`
+          : "Create an account to use more.",
       };
     }
 

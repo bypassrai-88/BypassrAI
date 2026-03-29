@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
 const USERNAME_MIN = 2;
 const USERNAME_MAX = 30;
@@ -15,6 +16,7 @@ function getAuthOrigin(): string {
 }
 
 export default function SignupPage() {
+  const portfolio = isPortfolioMode();
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -141,7 +143,9 @@ export default function SignupPage() {
         <div className="rounded-2xl border border-neutral-200/80 bg-white p-8 shadow-bubble-lg">
           <h1 className="text-2xl font-bold text-neutral-900">Create your free account</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Humanize AI text, bypass detectors, and get a 7-day free trial — no credit card required.
+            {portfolio
+              ? "Essay writer, summarizer, grammar, and more — start with a 7-day free trial. No credit card required."
+              : "Humanize AI text, bypass detectors, and get a 7-day free trial — no credit card required."}
           </p>
           <p className="mt-2 text-sm text-neutral-500">
             Already have an account?{" "}
@@ -155,13 +159,13 @@ export default function SignupPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
               </span>
-              Humanize AI writing in one click
+              {portfolio ? "AI essay drafts & summaries in one workspace" : "Humanize AI writing in one click"}
             </li>
             <li className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
               </span>
-              Built to bypass GPTZero, Turnitin & more
+              {portfolio ? "Grammar, translate, and paraphrase included" : "Built to bypass GPTZero, Turnitin & more"}
             </li>
             <li className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">

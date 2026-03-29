@@ -3,8 +3,31 @@ import type { NextRequest } from "next/server";
 
 const canonicalHost = "bypassrai.com";
 
+function portfolioModeFromEnv(): boolean {
+  const raw = (process.env.NEXT_PUBLIC_SITE_VARIANT ?? "default").trim().toLowerCase();
+  return raw === "portfolio" || raw === "experimental" || raw === "adjusted" || raw === "alt";
+}
+
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
+
+  // Portfolio mode: humanizer & detector-focused pages → neutral destinations
+  if (portfolioModeFromEnv()) {
+    if (url.pathname === "/humanize") {
+      return NextResponse.redirect(new URL("/essay-writer", url), 307);
+    }
+    if (
+      url.pathname === "/help/bypass-turnitin" ||
+      url.pathname === "/help/humanize-ai-text-for-school" ||
+      url.pathname === "/help/ai-detector-tips"
+    ) {
+      return NextResponse.redirect(new URL("/help", url), 307);
+    }
+    if (url.pathname === "/ai-check") {
+      return NextResponse.redirect(new URL("/summarizer", url), 307);
+    }
+  }
+
   const host = (request.headers.get("host") ?? "").toLowerCase().split(":")[0];
 
   // Only redirect when on production domain (bypassrai.com or www)

@@ -1,9 +1,21 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isPortfolioMode } from "@/config/site-variant";
+import { QUOTA_PORTFOLIO_PREFIX } from "@/lib/quota-messages";
 
 const TRIAL_WORDS = 5000;
 const LITE_WORDS = 5000;   // $4.99/mo
 const PRO_WORDS = 25000;   // $9.99/mo
 const PREMIUM_WORDS = 250000; // $25/mo — Premium tier
+
+/** Logged-in users without a subscription in portfolio mode: words per calendar month (UTC). */
+export const PORTFOLIO_FREE_WORDS_PER_MONTH = 25_000;
+
+export function getPortfolioFreePeriodStart(): string {
+  const now = new Date();
+  const y = now.getUTCFullYear();
+  const m = now.getUTCMonth() + 1;
+  return `${y}-${String(m).padStart(2, "0")}-01`;
+}
 
 type SubscriptionRow = {
   id: string;
@@ -101,12 +113,39 @@ export async function getSubscription(userId: string): Promise<SubscriptionRow |
   return sub;
 }
 
+async function checkPortfolioFreeUserQuota(
+  userId: string,
+  wordCount: number
+): Promise<UserQuotaResult> {
+  const periodStart = getPortfolioFreePeriodStart();
+  const supabase = createAdminClient();
+  const { data: usageRow } = await supabase
+    .from("usage")
+    .select("words_used")
+    .eq("user_id", userId)
+    .eq("period_start", periodStart)
+    .maybeSingle();
+
+  const wordsUsed = usageRow?.words_used ?? 0;
+  if (wordsUsed + wordCount > PORTFOLIO_FREE_WORDS_PER_MONTH) {
+    return {
+      allowed: false,
+      status: 403,
+      error: `${QUOTA_PORTFOLIO_PREFIX} monthly word limit reached. (${PORTFOLIO_FREE_WORDS_PER_MONTH.toLocaleString()} words per calendar month without a subscription. Resets on the 1st UTC.)`,
+    };
+  }
+  return { allowed: true, periodStart };
+}
+
 /**
  * Check if logged-in user can use wordCount words. Call only when user is logged in.
  */
 export async function checkUserQuota(userId: string, wordCount: number): Promise<UserQuotaResult> {
   const sub = await getSubscription(userId);
   if (!sub) {
+    if (isPortfolioMode()) {
+      return checkPortfolioFreeUserQuota(userId, wordCount);
+    }
     return {
       allowed: false,
       status: 403,

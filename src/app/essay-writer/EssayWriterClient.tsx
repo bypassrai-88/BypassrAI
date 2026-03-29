@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useQuotaModal } from "@/components/QuotaModalContext";
 import { isQuotaReachedError } from "@/lib/quota-messages";
 import { HUMANIZE_INPUT_STORAGE_KEY } from "@/lib/humanize-storage";
+import { isPortfolioMode } from "@/config/site-variant";
 
 const PAPER_TYPES = [
   "Essay",
@@ -52,7 +53,8 @@ type FormState = {
   purpose: string;
   gradeLevel: string;
   format: string;
-  wordCount: number;
+  /** Digits only while typing; parsed to 200–2000 on submit / blur. */
+  wordCount: string;
   tone: string;
   vocabulary: string;
   pointOfView: string;
@@ -66,7 +68,7 @@ const defaultForm: FormState = {
   purpose: "Inform",
   gradeLevel: "High school",
   format: "No specific format",
-  wordCount: 500,
+  wordCount: "500",
   tone: "Formal",
   vocabulary: "Intermediate",
   pointOfView: "Third person (he/she/they)",
@@ -96,11 +98,31 @@ export function EssayWriterClient() {
     return () => clearInterval(id);
   }, [loading]);
 
+  const clampWordCount = (raw: string): number | null => {
+    const trimmed = raw.trim();
+    if (trimmed === "") return null;
+    const n = parseInt(trimmed, 10);
+    if (!Number.isFinite(n)) return null;
+    return Math.min(2000, Math.max(200, n));
+  };
+
+  const normalizeWordCountField = () => {
+    setForm((f) => {
+      const n = clampWordCount(f.wordCount);
+      return { ...f, wordCount: String(n ?? 500) };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const topic = form.topic.trim();
     if (!topic) {
       setError("Topic or question is required.");
+      return;
+    }
+    const wordCount = clampWordCount(form.wordCount);
+    if (wordCount == null) {
+      setError("Enter a word count between 200 and 2000.");
       return;
     }
     setError("");
@@ -116,7 +138,7 @@ export function EssayWriterClient() {
           purpose: form.purpose,
           gradeLevel: form.gradeLevel,
           format: form.format,
-          wordCount: form.wordCount,
+          wordCount,
           tone: form.tone,
           vocabulary: form.vocabulary,
           pointOfView: form.pointOfView,
@@ -156,6 +178,10 @@ export function EssayWriterClient() {
   const handleHumanizeNext = () => {
     if (!essay.trim()) return;
     navigator.clipboard.writeText(essay).catch(() => {});
+    if (isPortfolioMode()) {
+      router.push("/grammar-checker");
+      return;
+    }
     try {
       sessionStorage.setItem(HUMANIZE_INPUT_STORAGE_KEY, essay);
     } catch {
@@ -168,12 +194,12 @@ export function EssayWriterClient() {
     <div className="relative">
       {loading && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-black/45 backdrop-blur-md"
           aria-live="polite"
           aria-busy="true"
         >
-          <div className="flex flex-col items-center gap-4 rounded-3xl bg-white px-10 py-10 shadow-2xl">
-            <div className="h-14 w-14 animate-spin rounded-full border-4 border-primary-200 border-t-primary-500" />
+          <div className="mx-4 flex max-w-md flex-col items-center gap-5 rounded-3xl border border-white/30 bg-white/95 px-10 py-10 shadow-bubble-lg">
+            <div className="h-14 w-14 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600" />
             <p className="text-center text-lg font-medium text-neutral-800">
               {LOADING_MESSAGES[loadingIndex]}
             </p>
@@ -181,9 +207,26 @@ export function EssayWriterClient() {
         </div>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="rounded-[2rem] border border-white/50 bg-white/35 p-6 shadow-bubble-lg backdrop-blur-md sm:p-8">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
         {/* Form: 4 bubbly category cards */}
         <div className="space-y-5">
+          <div className="flex items-center gap-3 pb-1">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-500 to-emerald-600 text-white shadow-md shadow-primary-500/30">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-neutral-900">Brief &amp; controls</h2>
+              <p className="text-sm text-neutral-500">Tune type, audience, and voice</p>
+            </div>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* 1. Type & topic */}
             <div className="rounded-3xl bg-gradient-to-br from-primary-50/90 to-primary-100/50 p-5 shadow-lg shadow-primary-200/20 ring-1 ring-primary-200/30">
@@ -245,14 +288,18 @@ export function EssayWriterClient() {
                   ))}
                 </select>
                 <input
-                  type="number"
-                  min={200}
-                  max={2000}
-                  step={100}
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  aria-label="Target word count"
                   value={form.wordCount}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, wordCount: parseInt(e.target.value, 10) || 500 }))
+                    setForm((f) => ({
+                      ...f,
+                      wordCount: e.target.value.replace(/\D/g, ""),
+                    }))
                   }
+                  onBlur={normalizeWordCountField}
                   className={inputClass}
                 />
                 <p className="text-xs text-emerald-700/80">Word count (200–2000)</p>
@@ -330,25 +377,33 @@ export function EssayWriterClient() {
             <button
               type="submit"
               disabled={loading || !form.topic.trim()}
-              className="w-full rounded-2xl bg-primary-500 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-primary-300/40 transition hover:bg-primary-600 hover:shadow-primary-400/50 disabled:opacity-50"
+              className="group relative w-full overflow-hidden rounded-2xl bg-gradient-to-r from-primary-600 via-primary-500 to-emerald-600 px-6 py-4 text-base font-semibold text-white shadow-lg shadow-primary-500/35 transition hover:shadow-xl hover:shadow-primary-500/40 disabled:opacity-50"
             >
-              {loading ? "Writing…" : "Write essay"}
+              <span className="relative z-10">{loading ? "Writing…" : "Write essay"}</span>
+              <span
+                className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 transition group-hover:opacity-100 group-hover:animate-pulse"
+                aria-hidden
+              />
             </button>
           </form>
         </div>
 
         {/* Output panel */}
-        <div className="flex flex-col rounded-3xl bg-gradient-to-br from-neutral-50 to-white p-6 shadow-xl ring-1 ring-neutral-200/60 min-h-[420px]">
+        <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 p-1 shadow-2xl ring-1 ring-neutral-700/50">
+          <div className="flex flex-1 flex-col rounded-[1.35rem] bg-gradient-to-b from-neutral-50 to-white p-6 sm:p-7">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <h3 className="font-semibold text-neutral-800">Your essay</h3>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary-600">Draft</p>
+              <h3 className="font-bold text-neutral-900">Your essay</h3>
+            </div>
             {essay && (
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={handleHumanizeNext}
-                  className="rounded-2xl bg-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary-300/30 transition hover:bg-primary-600"
+                  className="rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary-500/25 transition hover:from-primary-700 hover:to-primary-600"
                 >
-                  Humanize next
+                  {isPortfolioMode() ? "Polish in Grammar" : "Humanize next"}
                 </button>
                 <button
                   type="button"
@@ -364,15 +419,19 @@ export function EssayWriterClient() {
               </div>
             )}
           </div>
-          <div className="min-h-[320px] flex-1 rounded-2xl bg-white/80 p-5 text-neutral-700 whitespace-pre-wrap shadow-inner ring-1 ring-neutral-200/50">
+          <div className="max-h-[min(70vh,720px)] min-h-[320px] flex-1 overflow-y-auto rounded-2xl bg-white/90 p-5 text-[15px] leading-relaxed text-neutral-800 whitespace-pre-wrap shadow-inner ring-1 ring-neutral-200/60">
             {essay ? (
               essay
             ) : (
               <span className="text-neutral-400">
-                Your essay will appear here after you click &quot;Write essay.&quot; Use &quot;Humanize next&quot; to copy it to the humanizer and make it pass AI detection.
+                {isPortfolioMode()
+                  ? "Your essay will appear here after you click \"Write essay.\" Use \"Polish in Grammar\" to open the grammar checker—your draft is copied to the clipboard so you can paste and refine."
+                  : "Your essay will appear here after you click \"Write essay.\" Use \"Humanize next\" to copy it to the humanizer and make it pass AI detection."}
               </span>
             )}
           </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>

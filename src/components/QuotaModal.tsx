@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
 const USERNAME_MIN = 2;
 const USERNAME_MAX = 30;
 const USERNAME_REGEX = /^[a-zA-Z0-9_-]+$/;
 
-type View = "loading" | "auth" | "trial" | "subscribe";
+type View = "loading" | "auth" | "trial" | "subscribe" | "portfolio_limit";
 
 type QuotaModalProps = {
   open: boolean;
@@ -110,8 +111,12 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
 
   useEffect(() => {
     if (!open) return;
-    setView("loading");
     reset();
+    if (isPortfolioMode()) {
+      setView("portfolio_limit");
+      return;
+    }
+    setView("loading");
     fetchAccount();
   }, [open, fetchAccount, reset]);
 
@@ -249,6 +254,27 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
           <span className="text-xl leading-none">×</span>
         </button>
 
+        {view === "portfolio_limit" && (
+          <>
+            <h2 id="quota-modal-title" className="pr-8 text-xl font-bold text-neutral-900">
+              Usage limit
+            </h2>
+            <p className="mt-2 text-sm text-neutral-600">
+              Demo mode caps usage so things don’t get out of hand: each browser session allows a limited number of requests and a max size per request. If you’re signed in, you also have a monthly word total that resets on the 1st (UTC) — no paid plan required.
+            </p>
+            <p className="mt-3 text-sm text-neutral-500">
+              Try shorter text, come back next month if you hit the word cap, or use a fresh browser profile if you’ve burned through the session cap.
+            </p>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="mt-6 w-full rounded-xl bg-primary-600 py-3 text-sm font-semibold text-white hover:bg-primary-700"
+            >
+              OK
+            </button>
+          </>
+        )}
+
         {view === "loading" && (
           <p className="py-8 text-center text-neutral-500">Loading…</p>
         )}
@@ -260,8 +286,12 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
             </h2>
             <p className="mt-1 text-sm text-neutral-500">
               {mode === "signup"
-                ? "Humanize AI text, bypass detectors, and get a 7-day free trial — no credit card required."
-                : "Log in to continue using the humanizer and your tools."}
+                ? isPortfolioMode()
+                  ? "Essay writer, summarizer, grammar, and more — 7-day free trial, no credit card required."
+                  : "Humanize AI text, bypass detectors, and get a 7-day free trial — no credit card required."
+                : isPortfolioMode()
+                  ? "Log in to continue using the essay writer and writing tools."
+                  : "Log in to continue using the humanizer and your tools."}
             </p>
 
             {mode === "signup" && (
@@ -270,13 +300,13 @@ export function QuotaModal({ open, onClose, onSignInSuccess }: QuotaModalProps) 
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
                     <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   </span>
-                  Humanize AI writing in one click
+                  {isPortfolioMode() ? "Draft essays & summaries in one place" : "Humanize AI writing in one click"}
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">
                     <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   </span>
-                  Built to bypass GPTZero, Turnitin & more
+                  {isPortfolioMode() ? "Grammar, translate, paraphrase included" : "Built to bypass GPTZero, Turnitin & more"}
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600">

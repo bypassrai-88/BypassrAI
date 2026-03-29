@@ -1,82 +1,90 @@
 import Link from "next/link";
-import { HeroCTA, FinalCTA } from "@/components/PricingCTA";
 import { ScrollReveal } from "@/components/ScrollReveal";
-import { HomePortfolio } from "@/components/HomePortfolio";
-import { isPortfolioMode } from "@/config/site-variant";
+
+const toolPills = ["Essay Writer", "Grammar", "Summarize", "Translate", "Paraphrase"];
 
 const steps = [
   {
     step: 1,
-    title: "Paste Your Text",
-    description: "Paste any content — homework, assignment, or AI-generated draft.",
+    title: "Pick a tool",
+    description: "Choose essay help, grammar fixes, a summary, translation, or paraphrasing—whatever fits your task.",
   },
   {
     step: 2,
-    title: "Check AI Score",
-    description: "See how much of your text is considered human-written.",
+    title: "Add your text",
+    description: "Paste a draft, notes, or homework. Our AI suggests clear improvements while you keep control of the final wording.",
   },
   {
     step: 3,
-    title: "Humanize",
-    description: "Rewrite your text to sound 100% human-written and pass AI detection.",
+    title: "Refine and use",
+    description: "Edit the output, run another pass if needed, then copy your polished text into your document or LMS.",
   },
 ];
 
 const features = [
   {
-    title: "Built on Science, Powered by Precision",
+    title: "One place for everyday writing",
     description:
-      "Our rewriting engine is trained on academic writing, essays, and AI-generated text. We analyze syntax, tone, and word patterns commonly flagged by detection systems.",
+      "From essays to emails, Bypassr AI bundles the tools students and professionals use most—without juggling five different tabs.",
   },
   {
-    title: "Tested Across All AI Detectors",
+    title: "Fast, readable suggestions",
     description:
-      "We test every rewrite against leading tools like GPTZero, Turnitin, ZeroGPT, Quillbot and more. Our system adapts to new detection methods.",
+      "Get structured feedback and rewrites that stay close to your meaning, so you spend less time fixing robotic phrasing.",
   },
   {
-    title: "Trusted by Writers Worldwide",
+    title: "Built for real workflows",
     description:
-      "Students polish writing to sound natural, marketers improve content for engagement, and businesses send emails that feel personal — not robotic.",
+      "Short assignments, long papers, and quick translations all fit the same simple flow: paste, improve, export.",
   },
 ];
 
 const testimonials = [
   {
     quote:
-      "BypassrAI helped me humanize AI text from ChatGPT in seconds. It made my writing sound real and passed Turnitin easily. This tool saved my grade.",
-    author: "Julia K.",
+      "I use it for outlines and grammar passes before I submit. It’s like having a second pair of eyes on structure and clarity.",
+    author: "Jordan M.",
     role: "Student",
   },
   {
     quote:
-      "I've tried several tools to bypass AI detectors, but nothing compares. It's fast, accurate, and the free humanize feature is a lifesaver.",
-    author: "Liam R.",
-    role: "Content Writer",
+      "Summaries and translations save me a ton of time at work. The interface is straightforward and the results are easy to tweak.",
+    author: "Alex R.",
+    role: "Analyst",
   },
   {
     quote:
-      "The best thing? I can humanize my text and rewrite AI drafts without losing quality. It feels like a real editor polished it.",
-    author: "Sophie M.",
-    role: "Freelancer",
+      "I’m not a native English speaker—the grammar and paraphrase tools help me sound more natural without losing my voice.",
+    author: "Priya S.",
+    role: "Grad student",
   },
 ];
 
 const faqs = [
-  { q: "How does the AI humanizer work?", a: "You paste your text, optionally check the AI score, then click Humanize. Our engine rewrites the content to sound natural while keeping your meaning. Humanize AI text in one click." },
-  { q: "Can I bypass AI detection and Turnitin?", a: "We test against leading detectors (Turnitin, GPTZero, etc.) and update our system regularly. Use our AI humanizer to bypass AI detection; results vary by detector." },
-  { q: "How much does it cost?", a: "Try it free. Sign up for a 7-day free trial or a monthly plan for more. Cancel anytime." },
-  { q: "What languages are supported?", a: "English is fully supported. More languages may be added later." },
+  {
+    q: "What can I do with Bypassr AI?",
+    a: "Draft and refine essays, check grammar, summarize long text, translate between languages, and paraphrase for clarity—all from one suite of tools.",
+  },
+  {
+    q: "Is there a free tier?",
+    a: "Yes. You can try the tools with a free word allowance; sign up for a trial or plan when you need higher limits.",
+  },
+  {
+    q: "Do you store my documents?",
+    a: "We treat your text as yours. See our Privacy Policy for how data is handled and retained.",
+  },
+  {
+    q: "What languages are supported?",
+    a: "English is fully supported across tools. Translation covers many language pairs—check the translator for your needs.",
+  },
 ];
 
-const detectors = ["Turnitin", "Copyleaks", "ZeroGPT", "Quillbot", "Grammarly", "GPTZero"];
+const heroCtaClass =
+  "inline-flex shrink-0 rounded-full bg-primary-600 px-8 py-4 text-base font-semibold text-white shadow-bubble transition hover:bg-primary-700 hover:shadow-bubble-lg";
+const finalCtaClass =
+  "mt-6 inline-flex rounded-full bg-primary-600 px-8 py-4 text-base font-semibold text-white shadow-bubble transition hover:bg-primary-700 hover:shadow-bubble-lg";
 
-export const metadata = { alternates: { canonical: "/" } };
-
-export default function HomePage() {
-  if (isPortfolioMode()) {
-    return <HomePortfolio />;
-  }
-
+export function HomePortfolio() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -89,13 +97,9 @@ export default function HomePage() {
 
   return (
     <div className="overflow-x-hidden">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      {/* Hero */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
       <section className="relative min-h-[85vh] overflow-hidden border-b border-neutral-200/80 bg-hero-gradient sm:min-h-[80vh]">
-        {/* Soft floating blobs */}
         <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-primary-200/40 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute -right-32 top-40 h-96 w-96 rounded-full bg-primary-100/50 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute bottom-20 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-primary-300/30 blur-3xl" aria-hidden />
@@ -103,33 +107,43 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28">
           <ScrollReveal variant="fade-up" delay={0}>
             <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary-200/80 bg-white/80 px-4 py-1.5 text-sm font-semibold tracking-wide text-primary-700 shadow-soft backdrop-blur-sm">
-              Trusted by writers worldwide
+              AI writing suite
             </p>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={80}>
             <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl lg:text-6xl">
-              <span className="text-gradient">Bypassr AI</span> — Humanize AI Text & Bypass AI Detection
+              <span className="text-gradient">Bypassr AI</span> — Essays, Grammar, Translate &amp; More
             </h1>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={160}>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-neutral-600">
-              Free AI humanizer: bypass Turnitin AI and other detectors. Turn ChatGPT and AI drafts into natural, undetectable writing.
+              An all-in-one AI writing assistant: essay help, grammar, summarization, translation, and paraphrasing—built for students and professionals.
             </p>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={240}>
-            <HeroCTA />
+            <div className="mt-8 flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+              <Link href="/essay-writer" className={heroCtaClass}>
+                Try Essay Writer
+              </Link>
+              <Link
+                href="/grammar-checker"
+                className="inline-flex shrink-0 rounded-full border-2 border-primary-200 bg-white/90 px-8 py-4 text-base font-semibold text-primary-700 shadow-soft transition hover:bg-primary-50"
+              >
+                Grammar &amp; tools
+              </Link>
+            </div>
+            <p className="mt-3 text-sm text-neutral-500">Free to try · Sign in for trial or plans</p>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* Detector logos */}
       <section className="border-b border-neutral-200/80 bg-white/60 py-14 backdrop-blur-sm">
         <ScrollReveal variant="fade-in" className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="mb-8 text-sm font-semibold uppercase tracking-wider text-neutral-500">
-            Built to bypass the detectors that matter
+            Tools in one workspace
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-5">
-            {detectors.map((name, i) => (
+          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+            {toolPills.map((name) => (
               <span
                 key={name}
                 className="rounded-2xl bg-white/80 px-5 py-2.5 text-sm font-medium text-neutral-600 shadow-bubble transition hover:shadow-bubble-lg"
@@ -141,15 +155,12 @@ export default function HomePage() {
         </ScrollReveal>
       </section>
 
-      {/* 3 steps */}
       <section className="border-b border-neutral-200/80 bg-[#f5f5f7] py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <ScrollReveal variant="fade-up">
-            <h2 className="text-center text-3xl font-bold text-neutral-900 sm:text-4xl">
-              Humanize AI Writing in 3 Simple Steps
-            </h2>
+            <h2 className="text-center text-3xl font-bold text-neutral-900 sm:text-4xl">How it works</h2>
             <p className="mx-auto mt-3 max-w-xl text-center text-neutral-600">
-              Use our AI humanizer for essays and assignments. Bypass Turnitin AI detector and other checkers easily.
+              Three simple steps from rough draft to polished text.
             </p>
           </ScrollReveal>
           <div className="mt-16 grid gap-6 sm:grid-cols-3">
@@ -166,23 +177,22 @@ export default function HomePage() {
             ))}
           </div>
           <p className="mt-10 text-center text-neutral-600">
-            <Link href="/help/ai-detector-tips" className="font-medium text-primary-600 hover:underline">How to pass AI detection</Link>
+            <Link href="/help/how-it-works" className="font-medium text-primary-600 hover:underline">
+              How it works
+            </Link>
             {" · "}
-            <Link href="/help/bypass-turnitin" className="font-medium text-primary-600 hover:underline">How to bypass Turnitin</Link>
+            <Link href="/pricing" className="font-medium text-primary-600 hover:underline">
+              Pricing
+            </Link>
           </p>
         </div>
       </section>
 
-      {/* Features */}
       <section className="border-b border-neutral-200/80 bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="space-y-24">
             {features.map((f, i) => (
-              <ScrollReveal
-                key={i}
-                variant={i % 2 === 0 ? "slide-right" : "slide-left"}
-                delay={i * 80}
-              >
+              <ScrollReveal key={i} variant={i % 2 === 0 ? "slide-right" : "slide-left"} delay={i * 80}>
                 <div className="flex flex-col gap-6 md:flex-row md:items-center">
                   <div className="flex-1 rounded-3xl border border-neutral-200/80 bg-neutral-50/50 p-8 shadow-soft md:p-10">
                     <h3 className="text-2xl font-bold text-neutral-900">{f.title}</h3>
@@ -195,19 +205,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="border-b border-neutral-200/80 bg-[#f5f5f7] py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <ScrollReveal variant="fade-up">
-            <h2 className="text-center text-3xl font-bold text-neutral-900 sm:text-4xl">
-              What our users say
-            </h2>
+            <h2 className="text-center text-3xl font-bold text-neutral-900 sm:text-4xl">What people say</h2>
           </ScrollReveal>
           <div className="mt-16 grid gap-6 sm:grid-cols-3">
             {testimonials.map((t, i) => (
               <ScrollReveal key={i} variant="scale-in" delay={i * 120}>
                 <blockquote className="rounded-3xl border border-neutral-200/80 bg-white p-8 shadow-bubble transition hover:shadow-bubble-lg">
-                  <p className="text-neutral-700">"{t.quote}"</p>
+                  <p className="text-neutral-700">&ldquo;{t.quote}&rdquo;</p>
                   <footer className="mt-6">
                     <cite className="font-semibold not-italic text-neutral-900">{t.author}</cite>
                     <span className="text-neutral-500">, {t.role}</span>
@@ -219,7 +226,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="border-b border-neutral-200/80 bg-white py-20 sm:py-28">
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
           <ScrollReveal variant="fade-up">
@@ -238,18 +244,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="bg-[#f5f5f7] py-20 sm:py-28">
         <div className="mx-auto max-w-2xl px-4 text-center sm:px-6">
           <ScrollReveal variant="fade-up">
-            <h2 className="text-3xl font-bold text-neutral-900 sm:text-4xl">
-              AI Humanizer — Make Your Text Sound Human Instantly
-            </h2>
+            <h2 className="text-3xl font-bold text-neutral-900 sm:text-4xl">Start with the Essay Writer</h2>
             <p className="mt-5 text-neutral-600">
-              Turn robotic, AI-generated content into clear, natural writing. Whether it's from
-              ChatGPT or another tool, Bypassr AI helps you bypass AI detectors in one click.
+              Or jump into grammar, summaries, translation, or paraphrasing from the Tools menu.
             </p>
-            <FinalCTA />
+            <Link href="/essay-writer" className={finalCtaClass}>
+              Open Essay Writer
+            </Link>
           </ScrollReveal>
         </div>
       </section>

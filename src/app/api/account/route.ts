@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getSubscription } from "@/lib/quota-user";
+import { isPortfolioMode } from "@/config/site-variant";
+import {
+  getPortfolioFreePeriodStart,
+  getSubscription,
+  PORTFOLIO_FREE_WORDS_PER_MONTH,
+} from "@/lib/quota-user";
 
 /**
  * GET /api/account — profile, subscription, and current period usage for the logged-in user.
@@ -23,17 +28,38 @@ export async function GET() {
   const profile = profileRes.data;
   const canManageBilling = Boolean(profile?.stripe_customer_id);
 
-  let wordsUsed = 0;
-  let periodStart: string | null = null;
+  let usage:
+    | {
+        words_used: number;
+        period_start: string;
+        words_included?: number;
+        portfolio_free?: boolean;
+      }
+    | null = null;
+
   if (subscription?.current_period_start) {
-    periodStart = new Date(subscription.current_period_start).toISOString().slice(0, 10);
+    const periodStart = new Date(subscription.current_period_start).toISOString().slice(0, 10);
     const { data: usageRow } = await admin
       .from("usage")
       .select("words_used")
       .eq("user_id", user.id)
       .eq("period_start", periodStart)
       .maybeSingle();
-    wordsUsed = usageRow?.words_used ?? 0;
+    usage = { words_used: usageRow?.words_used ?? 0, period_start: periodStart };
+  } else if (isPortfolioMode()) {
+    const periodStart = getPortfolioFreePeriodStart();
+    const { data: usageRow } = await admin
+      .from("usage")
+      .select("words_used")
+      .eq("user_id", user.id)
+      .eq("period_start", periodStart)
+      .maybeSingle();
+    usage = {
+      words_used: usageRow?.words_used ?? 0,
+      period_start: periodStart,
+      words_included: PORTFOLIO_FREE_WORDS_PER_MONTH,
+      portfolio_free: true,
+    };
   }
 
   return NextResponse.json({
@@ -53,7 +79,7 @@ export async function GET() {
           cancel_at_period_end: subscription.cancel_at_period_end ?? false,
         }
       : null,
-    usage: periodStart ? { words_used: wordsUsed, period_start: periodStart } : null,
+    usage,
   });
 }
 

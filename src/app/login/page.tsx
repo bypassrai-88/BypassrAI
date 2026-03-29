@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
 function getAuthOrigin(): string {
   if (typeof window !== "undefined" && window.location.origin) return window.location.origin;
@@ -49,7 +50,7 @@ export default function LoginPage() {
         setError(err.message);
         return;
       }
-      router.push("/humanize");
+      router.push(isPortfolioMode() ? "/essay-writer" : "/humanize");
       router.refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -65,7 +66,9 @@ export default function LoginPage() {
         <div className="rounded-2xl border border-neutral-200/80 bg-white p-8 shadow-bubble-lg">
           <h1 className="text-2xl font-bold text-neutral-900">Welcome back</h1>
           <p className="mt-1 text-sm text-neutral-500">
-            Log in to continue using the humanizer and your tools.
+            {isPortfolioMode()
+              ? "Log in to continue using the essay writer and writing tools."
+              : "Log in to continue using the humanizer and your tools."}
           </p>
           <p className="mt-2 text-sm text-neutral-500">
             Don&apos;t have an account?{" "}

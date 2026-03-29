@@ -4,17 +4,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
-const mainNavLinks = [
+const mainNavLinksDefault = [
   { href: "/humanize", label: "AI Humanizer", badge: "V2" },
   { href: "/essay-writer", label: "Essay Writer" },
+  { href: "/summarizer", label: "Summarizer" },
 ];
 
-const toolsDropdownLinks = [
-  { href: "/grammar-checker", label: "Grammar checker" },
+const mainNavLinksPortfolio = [
+  { href: "/essay-writer", label: "Essay Writer" },
   { href: "/summarizer", label: "Summarizer" },
+];
+
+const toolsDropdownLinksDefault = [
+  { href: "/grammar-checker", label: "Grammar checker" },
   { href: "/translator", label: "Translator" },
-  { href: "/ai-check", label: "AI Detector" },
+];
+
+const toolsDropdownLinksPortfolio = [
+  { href: "/grammar-checker", label: "Grammar checker" },
+  { href: "/translator", label: "Translator" },
+  { href: "/paraphrase", label: "Paraphrase" },
 ];
 
 const otherLinks = [
@@ -22,14 +33,16 @@ const otherLinks = [
   { href: "/help", label: "Help" },
 ];
 
-const allToolPaths = toolsDropdownLinks.map((l) => l.href);
-
-function isToolsActive(pathname: string) {
-  return allToolPaths.some((path) => pathname === path || pathname.startsWith(path + "/"));
+function isToolsActive(pathname: string, toolPaths: string[]) {
+  return toolPaths.some((path) => pathname === path || pathname.startsWith(path + "/"));
 }
 
 export function Header() {
   const pathname = usePathname();
+  const portfolio = isPortfolioMode();
+  const mainNavLinks = portfolio ? mainNavLinksPortfolio : mainNavLinksDefault;
+  const toolsDropdownLinks = portfolio ? toolsDropdownLinksPortfolio : toolsDropdownLinksDefault;
+  const allToolPaths = toolsDropdownLinks.map((l) => l.href);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -105,7 +118,7 @@ export function Header() {
               type="button"
               onClick={() => setToolsOpen((o) => !o)}
               className={`flex items-center gap-1 rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors hover:bg-neutral-100 hover:text-primary-600 ${
-                isToolsActive(pathname) ? "bg-primary-50 text-primary-600" : "text-neutral-600"
+                isToolsActive(pathname, allToolPaths) ? "bg-primary-50 text-primary-600" : "text-neutral-600"
               }`}
               aria-expanded={toolsOpen}
               aria-haspopup="true"

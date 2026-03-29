@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
 import { StartTrialButton, PlanCheckoutButton, PricingFooter } from "@/components/PricingCTA";
+import { isPortfolioMode } from "@/config/site-variant";
 
-export const metadata: Metadata = {
-  title: "Pricing — AI Humanizer Plans | Bypassr AI",
-  description:
-    "Pricing for Bypassr AI humanizer. Humanize AI text and bypass AI detection with Lite, Pro, or Premium. Free trial. Cancel anytime.",
-};
-
-const paidPlans = [
+const paidPlansDefault = [
   {
     name: "Lite",
     tagline: "Perfect to get started",
@@ -60,28 +55,99 @@ const paidPlans = [
   },
 ];
 
+const paidPlansPortfolio = [
+  {
+    name: "Lite",
+    tagline: "Perfect to get started",
+    price: "$4.99",
+    period: "per month",
+    words: "5,000 words",
+    features: [
+      "5,000 words every month",
+      "Up to 2,500 words per use",
+      "All writing tools: Essay writer, Summarizer, Grammar, Translator, Paraphrase",
+      "Cancel anytime — no commitment",
+    ],
+    cta: "Get Lite",
+    planId: "lite",
+    primary: false,
+  },
+  {
+    name: "Pro",
+    tagline: "Most popular",
+    price: "$9.99",
+    period: "per month",
+    words: "25,000 words",
+    features: [
+      "25,000 words every month",
+      "Up to 2,500 words per use",
+      "Everything in Lite",
+      "Ideal for students & professionals",
+      "Cancel anytime",
+    ],
+    cta: "Get Pro",
+    planId: "pro",
+    primary: true,
+  },
+  {
+    name: "Premium",
+    tagline: "For power users",
+    price: "$25",
+    period: "per month",
+    words: "250,000 words",
+    features: [
+      "250,000 words every month",
+      "Up to 2,500 words per use",
+      "Everything in Pro",
+      "Teams, long papers, and daily writing workflows",
+      "Cancel anytime",
+    ],
+    cta: "Get Premium",
+    planId: "premium",
+    primary: false,
+  },
+];
+
+export async function generateMetadata(): Promise<Metadata> {
+  if (isPortfolioMode()) {
+    return {
+      title: "Pricing — AI Writing Tools | Bypassr AI",
+      description:
+        "Plans for Bypassr AI: essay writer, summarizer, grammar, translation, and paraphrasing. Free trial. Lite, Pro, or Premium. Cancel anytime.",
+    };
+  }
+  return {
+    title: "Pricing — AI Humanizer Plans | Bypassr AI",
+    description:
+      "Pricing for Bypassr AI humanizer. Humanize AI text and bypass AI detection with Lite, Pro, or Premium. Free trial. Cancel anytime.",
+  };
+}
+
 export default function PricingPage() {
+  const paidPlans = isPortfolioMode() ? paidPlansPortfolio : paidPlansDefault;
+  const portfolio = isPortfolioMode();
+
   return (
     <div className="border-b border-neutral-200 bg-page-gradient min-h-[60vh]">
-      {/* Hero */}
       <div className="border-b border-neutral-200/80 py-12 sm:py-16">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <h1 className="text-3xl font-bold text-neutral-900 sm:text-4xl">
             <span className="bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">Simple pricing.</span> No surprises.
           </h1>
           <p className="mt-4 text-lg text-neutral-600">
-            Start with a free trial, then choose the plan that fits. All paid plans include every tool, up to 2,500 words per use, and cancel anytime.
+            {portfolio
+              ? "Start with a free trial, then pick a plan. Every paid tier includes the essay writer, summarizer, grammar checker, translator, and paraphrase—up to 2,500 words per use. Cancel anytime."
+              : "Start with a free trial, then choose the plan that fits. All paid plans include every tool, up to 2,500 words per use, and cancel anytime."}
           </p>
         </div>
       </div>
 
-      {/* Paid plans */}
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-        <h2 className="text-center text-2xl font-bold text-neutral-900">
-          Choose your plan
-        </h2>
+        <h2 className="text-center text-2xl font-bold text-neutral-900">Choose your plan</h2>
         <p className="mx-auto mt-2 max-w-xl text-center text-neutral-600">
-          All plans include every tool. Upgrade or downgrade anytime.
+          {portfolio
+            ? "All plans unlock the full writing suite. Upgrade or downgrade anytime."
+            : "All plans include every tool. Upgrade or downgrade anytime."}
         </p>
         <div className="mt-10 grid gap-8 sm:grid-cols-3">
           {paidPlans.map((plan) => (
@@ -126,7 +192,6 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Free trial — below subscriptions */}
         <div className="mx-auto mt-14 max-w-md">
           <div className="rounded-xl border border-primary-200 bg-primary-50/30 p-6 shadow-sm">
             <h2 className="text-xl font-bold text-neutral-900">Free trial</h2>
@@ -134,9 +199,15 @@ export default function PricingPage() {
             <p className="mt-4 text-2xl font-bold text-neutral-900">$0</p>
             <p className="text-sm text-neutral-500">5,000 words for 7 days · up to 2,500 words per use</p>
             <ul className="mt-4 space-y-2 text-sm text-neutral-600">
-              <li className="flex items-center gap-2"><span className="text-primary-500">✓</span> Create an account (or log in)</li>
-              <li className="flex items-center gap-2"><span className="text-primary-500">✓</span> Add your card in Stripe — charged only after 7 days</li>
-              <li className="flex items-center gap-2"><span className="text-primary-500">✓</span> Converts to Lite ($4.99/mo) unless you cancel</li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary-500">✓</span> Create an account (or log in)
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary-500">✓</span> Add your card in Stripe — charged only after 7 days
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="text-primary-500">✓</span> Converts to Lite ($4.99/mo) unless you cancel
+              </li>
             </ul>
             <StartTrialButton />
           </div>

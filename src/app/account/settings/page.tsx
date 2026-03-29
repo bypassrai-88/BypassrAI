@@ -4,13 +4,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
 type AccountData = {
   email: string | null;
   created_at?: string | null;
   profile: { username?: string | null; can_manage_billing?: boolean };
   subscription: { plan: string | null; words_included: number } | null;
-  usage: { words_used: number; period_start: string } | null;
+  usage: {
+    words_used: number;
+    period_start: string;
+    words_included?: number;
+    portfolio_free?: boolean;
+  } | null;
 };
 
 type UsageRow = { period_start: string; words_used: number };
@@ -296,8 +302,11 @@ export default function SettingsPage() {
             >
               {portalLoading ? "Opening…" : "Manage subscription & payment history"}
             </button>
-            {!data.profile.can_manage_billing && (
+            {!data.profile.can_manage_billing && !isPortfolioMode() && (
               <p className="mt-2 text-xs text-neutral-500">Subscribe or start a trial to access billing.</p>
+            )}
+            {!data.profile.can_manage_billing && isPortfolioMode() && (
+              <p className="mt-2 text-xs text-neutral-500">Demo site — no subscription on file.</p>
             )}
           </div>
         </section>
@@ -308,6 +317,12 @@ export default function SettingsPage() {
           {data.usage && data.subscription && (
             <p className="mt-1 text-sm text-neutral-600">
               This period: {data.usage.words_used.toLocaleString()} / {data.subscription.words_included.toLocaleString()} words
+            </p>
+          )}
+          {data.usage?.portfolio_free && data.usage.words_included != null && (
+            <p className="mt-1 text-sm text-neutral-600">
+              This month (UTC): {data.usage.words_used.toLocaleString()} / {data.usage.words_included.toLocaleString()} words (demo
+              mode, no subscription).
             </p>
           )}
           {usageHistory.length > 0 ? (

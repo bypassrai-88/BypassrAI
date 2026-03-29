@@ -1,13 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { isPortfolioMode } from "@/config/site-variant";
 
-export const metadata: Metadata = {
-  title: "Help & FAQ — AI Humanizer & Bypass AI | Bypassr AI",
-  description:
-    "FAQ: humanize AI text, bypass AI detection, use the AI humanizer. Bypassr AI help and tips.",
-};
-
-const faqs = [
+const faqsDefault = [
   {
     q: "How does BypassrAI work?",
     a: "You paste your text, optionally check the AI score, then click Humanize or Paraphrase. Our engine rewrites the content to sound natural while keeping your meaning. We analyze syntax, tone, and word patterns commonly flagged by detection systems.",
@@ -46,7 +41,60 @@ const faqs = [
   },
 ];
 
+const faqsPortfolio = [
+  {
+    q: "What is Bypassr AI?",
+    a: "Bypassr AI is a suite of AI writing tools: essay writer, grammar checker, summarizer, translator, and paraphraser. Use them together to draft, tighten, and polish your work.",
+  },
+  {
+    q: "How do I get started?",
+    a: "Pick a tool from the header (Essay Writer or Tools). Paste your text or follow the prompts, then edit the result. You can try a limited amount free without an account.",
+  },
+  {
+    q: "How much does it cost?",
+    a: "You can try tools with a free word allowance. Create an account for a 7-day trial with more capacity, then choose a monthly plan if you need higher limits. See Pricing for details.",
+  },
+  {
+    q: "What languages are supported?",
+    a: "English is fully supported across tools. The translator supports many language pairs—open the translator to see options.",
+  },
+  {
+    q: "Can I use this for long essays or papers?",
+    a: "Yes. Paid plans include higher per-use and monthly word limits so you can work on longer documents in sections if needed.",
+  },
+  {
+    q: "I hit my word limit. What now?",
+    a: "Sign up for a free trial or subscribe on the Pricing page to unlock more words for the month.",
+  },
+  {
+    q: "How do I cancel my subscription?",
+    a: "Log in, go to Account, and use Manage subscription. You keep access until the end of your billing period.",
+  },
+  {
+    q: "Is my text private?",
+    a: "We treat your content seriously. See our Privacy Policy for how we handle data you submit to the tools.",
+  },
+];
+
+export async function generateMetadata(): Promise<Metadata> {
+  if (isPortfolioMode()) {
+    return {
+      title: "Help & FAQ — AI Writing Tools | Bypassr AI",
+      description:
+        "FAQ for Bypassr AI: essay writer, summarizer, grammar checker, translation, and paraphrasing.",
+    };
+  }
+  return {
+    title: "Help & FAQ — AI Humanizer & Bypass AI | Bypassr AI",
+    description:
+      "FAQ: humanize AI text, bypass AI detection, use the AI humanizer. Bypassr AI help and tips.",
+  };
+}
+
 export default function HelpPage() {
+  const portfolio = isPortfolioMode();
+  const faqs = portfolio ? faqsPortfolio : faqsDefault;
+
   return (
     <div className="border-b border-neutral-200 bg-page-gradient min-h-[60vh] py-12 sm:py-16">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
@@ -69,36 +117,63 @@ export default function HelpPage() {
           ))}
         </dl>
         <div className="mt-10 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <h2 className="font-semibold text-neutral-900">Guides & articles</h2>
+          <h2 className="font-semibold text-neutral-900">Guides</h2>
           <ul className="mt-3 space-y-2">
-            <li>
-              <Link href="/help/humanize-ai-text-for-school" className="text-primary-600 hover:underline">
-                How to humanize AI text for school
-              </Link>
-            </li>
-            <li>
-              <Link href="/help/bypass-turnitin" className="text-primary-600 hover:underline">
-                How to bypass Turnitin
-              </Link>
-            </li>
-            <li>
-              <Link href="/help/ai-detector-tips" className="text-primary-600 hover:underline">
-                How to pass AI detection
-              </Link>
-            </li>
-            <li>
-              <Link href="/help/how-it-works" className="text-primary-600 hover:underline">
-                How it works
-              </Link>
-            </li>
+            {portfolio ? (
+              <>
+                <li>
+                  <Link href="/help/how-it-works" className="text-primary-600 hover:underline">
+                    How it works
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/summarizer" className="text-primary-600 hover:underline">
+                    Summarizer
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/essay-writer" className="text-primary-600 hover:underline">
+                    Essay writer
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/grammar-checker" className="text-primary-600 hover:underline">
+                    Grammar checker
+                  </Link>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link href="/help/humanize-ai-text-for-school" className="text-primary-600 hover:underline">
+                    How to humanize AI text for school
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/help/bypass-turnitin" className="text-primary-600 hover:underline">
+                    How to bypass Turnitin
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/help/ai-detector-tips" className="text-primary-600 hover:underline">
+                    How to pass AI detection
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/help/how-it-works" className="text-primary-600 hover:underline">
+                    How it works
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
         <div className="mt-8 flex flex-wrap gap-4">
           <Link
-            href="/humanize"
+            href={portfolio ? "/essay-writer" : "/humanize"}
             className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
           >
-            Try Humanizer
+            {portfolio ? "Try Essay Writer" : "Try Humanizer"}
           </Link>
           <Link
             href="/pricing"

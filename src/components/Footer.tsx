@@ -1,18 +1,29 @@
 import Link from "next/link";
+import { isPortfolioMode } from "@/config/site-variant";
 
-const products = [
+const productsDefault = [
   { href: "/humanize", label: "AI Humanizer" },
   { href: "/essay-writer", label: "Essay Writer" },
-];
-
-const tools = [
-  { href: "/grammar-checker", label: "Grammar checker" },
   { href: "/summarizer", label: "Summarizer" },
-  { href: "/translator", label: "Translator" },
-  { href: "/ai-check", label: "AI Detector" },
 ];
 
-const resources = [
+const productsPortfolio = [
+  { href: "/essay-writer", label: "Essay Writer" },
+  { href: "/summarizer", label: "Summarizer" },
+];
+
+const toolsDefault = [
+  { href: "/grammar-checker", label: "Grammar checker" },
+  { href: "/translator", label: "Translator" },
+];
+
+const toolsPortfolio = [
+  { href: "/grammar-checker", label: "Grammar checker" },
+  { href: "/translator", label: "Translator" },
+  { href: "/paraphrase", label: "Paraphrase" },
+];
+
+const resourcesDefault = [
   { href: "/pricing", label: "Pricing" },
   { href: "/help", label: "FAQ" },
   { href: "/help/how-it-works", label: "How it works" },
@@ -22,12 +33,27 @@ const resources = [
   { href: "/contact", label: "Contact" },
 ];
 
+const resourcesPortfolio = [
+  { href: "/pricing", label: "Pricing" },
+  { href: "/help", label: "FAQ" },
+  { href: "/help/how-it-works", label: "How it works" },
+  { href: "/contact", label: "Contact" },
+];
+
 const legal = [
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Service" },
 ];
 
 export function Footer() {
+  const portfolio = isPortfolioMode();
+  const products = portfolio ? productsPortfolio : productsDefault;
+  const tools = portfolio ? toolsPortfolio : toolsDefault;
+  const resources = portfolio ? resourcesPortfolio : resourcesDefault;
+  const tagline = portfolio
+    ? "Essays, grammar, summaries, translation, and more."
+    : "Humanize AI text. Bypass detectors. Sound human.";
+
   return (
     <footer className="border-t border-neutral-200/80 bg-white">
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
@@ -36,9 +62,7 @@ export function Footer() {
             <p className="mb-4 font-semibold text-neutral-900">
               <span className="text-primary-600">Bypassr</span>AI
             </p>
-            <p className="text-sm text-neutral-500">
-              Humanize AI text. Bypass detectors. Sound human.
-            </p>
+            <p className="text-sm text-neutral-500">{tagline}</p>
           </div>
           <div>
             <h3 className="mb-3 text-sm font-semibold text-neutral-900">Products</h3>

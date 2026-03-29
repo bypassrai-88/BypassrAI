@@ -6,7 +6,12 @@
  *
  * Prerequisites: dev server running (npm run dev), ANTHROPIC_API_KEY in .env.local
  *
- * Usage: node --env-file=.env.local scripts/optimizer-run.mjs
+ * Usage: node scripts/optimizer-run.mjs   (from project root; .env.local is auto-loaded from project)
+ * From anywhere: node /path/to/BypassrAI/scripts/optimizer-run.mjs
+ * If Next.js is on port 3001: HUMANIZER_BASE_URL=http://localhost:3001 node scripts/optimizer-run.mjs
+ * Extreme run: HUMANIZER_EXTREME=1 node scripts/optimizer-run.mjs
+ * Legible run: HUMANIZER_LEGIBLE=1 node scripts/optimizer-run.mjs
+ * Pipeline-only (no Claude): SKIP_CLAUDE=1 HUMANIZER_EXTREME=1 node scripts/optimizer-run.mjs
  *
  * Output: full humanized text (console + scripts/optimizer-latest-output.txt),
  * new row in scripts/optimizer-runs.csv, run id in scripts/optimizer-run-meta.json
@@ -14,12 +19,25 @@
 
 const fs = await import("fs");
 const path = await import("path");
+const { fileURLToPath } = await import("url");
+const { spawn } = await import("child_process");
+
+// Load .env.local from project root so this works even when run from ~ or other dirs
+const scriptDir = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(scriptDir, "..");
+const envPath = path.join(projectRoot, ".env.local");
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, "utf8");
+  for (const line of envContent.split("\n")) {
+    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+    if (m) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "").trim();
+  }
+}
 
 const BASE_URL = process.env.HUMANIZER_BASE_URL || "http://localhost:3000";
-const FALLBACK_PORTS = [3001, 3002, 3003, 3004, 3005];
 const DEV_HUMANIZE = `${BASE_URL}/api/dev/humanize-sample`;
 
-const DIR = path.resolve(process.cwd(), "scripts");
+const DIR = path.resolve(scriptDir);
 const CSV_PATH = path.join(DIR, "optimizer-runs.csv");
 const OUTPUT_PATH = path.join(DIR, "optimizer-latest-output.txt");
 const META_PATH = path.join(DIR, "optimizer-run-meta.json");
@@ -41,30 +59,24 @@ In conclusion, nutrition forms the cornerstone of good health, influencing every
 const SKIP_CLAUDE = process.env.SKIP_CLAUDE === "1" || process.argv.includes("--no-claude");
 
 async function humanize(text, refine = false) {
-  const urls = [DEV_HUMANIZE];
-  if (!process.env.HUMANIZER_BASE_URL)
-    FALLBACK_PORTS.forEach((port) => urls.push(`http://localhost:${port}/api/dev/humanize-sample`));
-  let lastErr;
-  const body = { text, refine, skipClaude: SKIP_CLAUDE };
-  for (const url of urls) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: res.statusText }));
-        lastErr = new Error(err.error || `Humanize ${res.status}`);
-        continue;
-      }
-      const data = await res.json();
-      return data.humanized ?? "";
-    } catch (e) {
-      lastErr = e;
-    }
+  console.log("Calling " + DEV_HUMANIZE + " ... (this can take 1–2 minutes)");
+  if (BASE_URL.includes("3001")) console.log("(Using port 3001 – if your dev server is on 3000, set HUMANIZER_BASE_URL=http://localhost:3000)");
+  else console.log("(If Next said 'trying 3001 instead', run with: HUMANIZER_BASE_URL=http://localhost:3001 node --env-file=.env.local scripts/optimizer-run.mjs)");
+  const legible = process.env.HUMANIZER_LEGIBLE === "1";
+  const extreme = process.env.HUMANIZER_EXTREME === "1" && !legible;
+  const body = { text, refine, skipClaude: SKIP_CLAUDE, extreme, legible };
+  const res = await fetch(DEV_HUMANIZE, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || `Humanize ${res.status}`);
   }
-  throw lastErr || new Error("Humanize request failed");
+  const data = await res.json();
+  console.log("Response received, length: " + (data.humanized?.length ?? 0) + " chars");
+  return data.humanized ?? "";
 }
 
 const CSV_HEADER = "run_id,date_iso,score_human_pct,score_ai_pct,notes,is_best,pipeline_changes";
@@ -98,10 +110,13 @@ function escapeCsv(s) {
 async function main() {
   const runId = getNextRunId();
   const dateIso = new Date().toISOString();
+  const legible = process.env.HUMANIZER_LEGIBLE === "1";
 
   console.log("Optimizer Run #" + runId);
   console.log("==================");
-  console.log("Humanizing sample (" + DEFAULT_SAMPLE.split(/\s+/).length + " words)..." + (SKIP_CLAUDE ? " [PIPELINE-ONLY, no Claude]" : ""));
+  const modeLabel = legible ? " [LEGIBLE]" : process.env.HUMANIZER_EXTREME === "1" ? " [EXTREME v2.3]" : "";
+  console.log("Humanizing sample (" + DEFAULT_SAMPLE.split(/\s+/).length + " words)..." + modeLabel + (SKIP_CLAUDE ? " [PIPELINE-ONLY, no Claude]" : ""));
+  console.log("Make sure the dev server is running: npm run dev");
   console.log("");
 
   const humanized = await humanize(DEFAULT_SAMPLE);
@@ -111,12 +126,20 @@ async function main() {
   }
 
   fs.writeFileSync(OUTPUT_PATH, humanized, "utf8");
+  const written = fs.readFileSync(OUTPUT_PATH, "utf8");
+  if (written !== humanized) {
+    console.error("WARNING: Output file verification failed. Expected to write to: " + OUTPUT_PATH);
+  }
+  const runMarkerPath = path.join(DIR, "optimizer-latest-run.txt");
+  fs.writeFileSync(runMarkerPath, `Run #${runId} | ${dateIso}\nOutput file: ${OUTPUT_PATH}\n`, "utf8");
   appendRunRow(runId, dateIso);
   fs.writeFileSync(
     META_PATH,
-    JSON.stringify({ run_id: runId, timestamp_iso: dateIso, output_file: "optimizer-latest-output.txt" }, null, 2),
+    JSON.stringify({ run_id: runId, timestamp_iso: dateIso, output_file: "optimizer-latest-output.txt", output_path_absolute: OUTPUT_PATH }, null, 2),
     "utf8"
   );
+
+  copyToClipboard(humanized);
 
   console.log("--- PASTE EVERYTHING BELOW INTO GPTZERO ---");
   console.log("");
@@ -125,10 +148,23 @@ async function main() {
   console.log("--- END ---");
   console.log("");
   console.log("Run #" + runId + " logged to " + CSV_PATH);
-  console.log("Full output also saved to " + OUTPUT_PATH);
+  console.log("Output written to (open this file to verify):");
+  console.log("  " + OUTPUT_PATH);
+  console.log("Run marker: " + runMarkerPath + " -> Run #" + runId);
+  console.log("(Copied to clipboard — paste with Cmd+V into GPTZero)");
   console.log("");
   console.log("After you paste the text above into GPTZero, tell me the % human (and % AI if you have it).");
   console.log("I'll log the score and make deliberate pipeline changes for the next run.");
+}
+
+/** Copy text to system clipboard (macOS pbcopy, Windows clip). No-op if unavailable. */
+function copyToClipboard(text) {
+  const plat = process.platform;
+  const cmd = plat === "darwin" ? "pbcopy" : plat === "win32" ? "clip" : null;
+  if (!cmd) return;
+  const proc = spawn(cmd, [], { stdio: ["pipe", "ignore", "ignore"] });
+  proc.stdin.write(text, "utf8", () => proc.stdin.end());
+  proc.on("error", () => {});
 }
 
 main().catch((err) => {

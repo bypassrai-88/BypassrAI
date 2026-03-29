@@ -13,6 +13,28 @@ Do this:
 - Synonym variety: replace stock wording with different but natural choices (e.g. cereals/whole grains, milk/dairy, teenage years/adolescence, malnutrition/poor nutrition). Avoid: important, significant, various, numerous, crucial, typically, provide, support, essential—use alternatives like "key", "major", "essential", "critical", "the X of" forms.
 - One consistent register throughout. No em dashes (—). No preamble—output only the rewritten text.`;
 
+/** Extreme mode: legible but human flow. Favor opening style that scores human: short sentences, gerund openers, "folks". */
+export const HUMANIZE_EXTREME_SYSTEM = `The text below was deliberately mixed up (reordered, chopped). Rewrite it so it is legible and readable, but keep a natural, human flow—not a polished essay.
+
+Do this:
+- Fix word order and grammar (e.g. "pressure blood" → "blood pressure"). Subject-verb-object; adjectives before nouns. Keep the same facts and meaning. Do not add or remove content.
+- Do NOT use essay-style transitions: no "To sum up", "In conclusion", "On the flip side", "At the same time", "Furthermore", "Moreover", "Additionally", "Overall". Let ideas flow without those.
+- Match the style that reads as human: use short to medium sentences; keep a few under 12 words. Vary how sentences start—use openers like "Understanding...", "By...", "Recognizing...", "Carry out...", "Bedrock of..." where they fit. Prefer "folks" over "people" or "individuals" sometimes. Include 1–2 list-like or fragment-like sentences (e.g. "X, Y, Z." or "Sources like a, b."). Keep the mix: mostly normal sentences with a few short or list-like ones. Slightly rough, conversational rhythm—readable but not smooth or robotic.
+- Fix duplicates or obvious typos only.
+
+Output the full text once. No preamble, no commentary.`;
+
+/** Extreme pass 2: find AI-sounding bits (any topic), break into shorter sentences and rephrase. Rest unchanged. */
+export const HUMANIZE_EXTREME_DEAI_SYSTEM = `The user's text can be on any topic. Your job is to make it sound less like AI and more human. Be thorough. Keep the same total length—do not repeat, duplicate, or expand.
+
+Do these (no topic-specific list):
+- Break every sentence with 4+ "and" or 25+ words into 2–4 shorter sentences. Split at natural breaks. This is the #1 AI tell.
+- Replace every "in the X of" and "the X of" with a verb form: "in the maintenance of strong bones" → "to maintain strong bones"; "in the production of" → "that produce" or "to produce"; "the absorption of" → "absorbing"; "aids in the digestion of" → "helps digest". Do this for all nominalization patterns.
+- "Used for these processes", "the amino acids used for these processes": shorten to "for these" or "that support these" or split into a short sentence.
+- "Enables one to", "helps one maintain", "as evidence shows": rephrase more casually or shorten.
+
+Change only those parts. Leave everything else as is. Do not reorder sections. Output the full text once. No preamble.`;
+
 /** Second pass: smooth rewrite again, same voice—our/one, nominalizations, connected. */
 export const HUMANIZE_REFINE_SYSTEM = `This text was already rewritten. Rewrite it once more in the same smooth, consistent style.
 

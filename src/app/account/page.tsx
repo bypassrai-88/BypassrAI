@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { isPortfolioMode } from "@/config/site-variant";
 
 type AccountData = {
   email: string | null;
@@ -16,7 +17,12 @@ type AccountData = {
     current_period_end: string | null;
     cancel_at_period_end: boolean;
   } | null;
-  usage: { words_used: number; period_start: string } | null;
+  usage: {
+    words_used: number;
+    period_start: string;
+    words_included?: number;
+    portfolio_free?: boolean;
+  } | null;
 };
 
 export default function AccountPage() {
@@ -187,7 +193,7 @@ export default function AccountPage() {
   const isTrial = sub?.status === "trial";
   const isActive = sub?.status === "active";
   const isPremium = sub?.plan === "premium";
-  const canStartTrial = !sub && !data.profile.trial_used;
+  const canStartTrial = !sub && !data.profile.trial_used && !isPortfolioMode();
   const canCancelTrial = isTrial && !sub?.cancel_at_period_end;
   const canManageBilling = data.profile.can_manage_billing ?? false;
   const showUpgradeAndCancel = !isPremium;
@@ -200,7 +206,9 @@ export default function AccountPage() {
     ? "Free trial"
     : isActive
       ? (sub?.plan ? planLabels[sub.plan] ?? sub.plan : "Paid")
-      : "No plan";
+      : isPortfolioMode()
+        ? "Open access (demo limits)"
+        : "No plan";
 
   return (
     <div className="min-h-[60vh] bg-page-gradient">
@@ -264,6 +272,12 @@ export default function AccountPage() {
               Words used this period: {data.usage.words_used.toLocaleString()} / {sub.words_included.toLocaleString()}
             </p>
           )}
+          {data.usage?.portfolio_free && data.usage.words_included != null && (
+            <p className="mt-2 text-sm text-neutral-600">
+              Words used this month (UTC): {data.usage.words_used.toLocaleString()} /{" "}
+              {data.usage.words_included.toLocaleString()} — no subscription required in demo mode.
+            </p>
+          )}
 
           <div className="mt-4 flex flex-wrap gap-3">
             {canStartTrial && (
@@ -320,10 +334,10 @@ export default function AccountPage() {
             Settings
           </Link>
           <Link
-            href="/humanize"
+            href={isPortfolioMode() ? "/essay-writer" : "/humanize"}
             className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
           >
-            Go to Humanizer
+            {isPortfolioMode() ? "Go to Essay Writer" : "Go to Humanizer"}
           </Link>
           <button
             type="button"

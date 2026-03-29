@@ -1,12 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { isPortfolioMode } from "@/config/site-variant";
 
-export const metadata: Metadata = {
-  title: "How it works — BypassrAI",
-  description: "Learn how BypassrAI humanizes AI text and bypasses detectors.",
-};
-
-const steps = [
+const stepsDefault = [
   {
     title: "Paste your text",
     description:
@@ -29,7 +25,46 @@ const steps = [
   },
 ];
 
+const stepsPortfolio = [
+  {
+    title: "Choose a tool",
+    description:
+      "Open the Essay Writer for structured drafts, or use Grammar, Summarizer, Translator, or Paraphrase from the Tools menu—depending on what you need.",
+  },
+  {
+    title: "Add your content",
+    description:
+      "Paste notes, a rough draft, or source material. Each tool guides you: topic and tone for essays, length for summaries, or language pair for translation.",
+  },
+  {
+    title: "Review and edit",
+    description:
+      "Read the AI suggestion, tweak wording, and run another pass if you want a different tone or shorter summary. You stay in control of the final text.",
+  },
+  {
+    title: "Export and submit",
+    description:
+      "Copy your polished text into Word, Google Docs, or your LMS. Use grammar and paraphrase passes to tighten clarity before you turn work in.",
+  },
+];
+
+export async function generateMetadata(): Promise<Metadata> {
+  if (isPortfolioMode()) {
+    return {
+      title: "How it works — AI Writing Tools | Bypassr AI",
+      description: "How Bypassr AI helps you write: essay drafts, summaries, grammar, translation, and paraphrasing.",
+    };
+  }
+  return {
+    title: "How it works — BypassrAI",
+    description: "Learn how BypassrAI humanizes AI text and bypasses detectors.",
+  };
+}
+
 export default function HowItWorksPage() {
+  const portfolio = isPortfolioMode();
+  const steps = portfolio ? stepsPortfolio : stepsDefault;
+
   return (
     <div className="border-b border-neutral-200 bg-page-gradient min-h-[60vh] py-12 sm:py-16">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
@@ -37,7 +72,9 @@ export default function HowItWorksPage() {
           <span className="bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent">How it works</span>
         </h1>
         <p className="mt-2 text-neutral-600">
-          BypassrAI uses advanced linguistic modeling to rewrite text so it sounds human-written.
+          {portfolio
+            ? "Bypassr AI brings essay writing, summarization, grammar, translation, and paraphrasing into one simple workflow."
+            : "BypassrAI uses advanced linguistic modeling to rewrite text so it sounds human-written."}
         </p>
         <div className="mt-10 space-y-8">
           {steps.map((step, i) => (
@@ -53,16 +90,19 @@ export default function HowItWorksPage() {
           ))}
         </div>
         <div className="mt-12 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-          <h2 className="font-semibold text-neutral-900">Built on science</h2>
+          <h2 className="font-semibold text-neutral-900">{portfolio ? "Built for real writing tasks" : "Built on science"}</h2>
           <p className="mt-2 text-neutral-600">
-            Our rewriting engine is trained on academic writing, essays, and AI-generated text.
-            We analyze syntax, tone, and word patterns commonly flagged by detection systems like
-            GPTZero, Turnitin, and ZeroGPT. We test every rewrite and update our system regularly.
+            {portfolio
+              ? "Whether you are outlining an essay, condensing a long article, or fixing grammar in a second language, each tool is tuned for clear, usable output you can edit in minutes."
+              : "Our rewriting engine is trained on academic writing, essays, and AI-generated text. We analyze syntax, tone, and word patterns commonly flagged by detection systems like GPTZero, Turnitin, and ZeroGPT. We test every rewrite and update our system regularly."}
           </p>
         </div>
         <p className="mt-8">
-          <Link href="/humanize" className="font-medium text-primary-600 hover:underline">
-            Try the Humanizer →
+          <Link
+            href={portfolio ? "/essay-writer" : "/humanize"}
+            className="font-medium text-primary-600 hover:underline"
+          >
+            {portfolio ? "Try the Essay Writer →" : "Try the Humanizer →"}
           </Link>
         </p>
       </div>

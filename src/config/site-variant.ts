@@ -1,17 +1,24 @@
 /**
  * Two site modes (swap via env — no duplicate codebase):
  *
- *   NEXT_PUBLIC_SITE_VARIANT=default   → full product (humanizer, detector messaging, SEO)
- *   NEXT_PUBLIC_SITE_VARIANT=portfolio → AI writing suite positioning for demos / resume
+ *   NEXT_PUBLIC_SITE_VARIANT=portfolio   → AI writing suite (recommended on Vercel)
+ *   SITE_VARIANT=portfolio               → optional alias; next.config copies it to NEXT_PUBLIC at build
  *
  * Aliases for portfolio: experimental | adjusted | alt
  *
- * Vercel: set per environment (Production vs Preview) or toggle when you want to switch.
+ * Vercel: add the variable, then **Redeploy** (Deploy → … → Redeploy). NEXT_PUBLIC_* is baked in at
+ * build time — changing env without a new build leaves the old variant.
  */
 
 export type SiteVariant = "default" | "portfolio";
 
-const raw = (process.env.NEXT_PUBLIC_SITE_VARIANT ?? "default").trim().toLowerCase();
+function normalizeVariantInput(value: string | undefined): string {
+  if (value == null) return "default";
+  const v = value.trim().toLowerCase().replace(/^["']|["']$/g, "");
+  return v === "" ? "default" : v;
+}
+
+const raw = normalizeVariantInput(process.env.NEXT_PUBLIC_SITE_VARIANT ?? "default");
 
 export function getSiteVariant(): SiteVariant {
   if (raw === "portfolio" || raw === "experimental" || raw === "adjusted" || raw === "alt") {

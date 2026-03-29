@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isPortfolioMode } from "@/config/site-variant";
 
 const canonicalHost = "bypassrai.com";
-
-function portfolioModeFromEnv(): boolean {
-  const raw = (process.env.NEXT_PUBLIC_SITE_VARIANT ?? "default").trim().toLowerCase();
-  return raw === "portfolio" || raw === "experimental" || raw === "adjusted" || raw === "alt";
-}
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
 
   // Portfolio mode: humanizer & detector-focused pages → neutral destinations
-  if (portfolioModeFromEnv()) {
+  if (isPortfolioMode()) {
     if (url.pathname === "/humanize") {
       return NextResponse.redirect(new URL("/essay-writer", url), 307);
     }

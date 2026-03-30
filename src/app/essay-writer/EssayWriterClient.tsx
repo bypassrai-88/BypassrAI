@@ -208,7 +208,7 @@ export function EssayWriterClient() {
       )}
 
       <div className="rounded-[2rem] border border-white/50 bg-white/35 p-6 shadow-bubble-lg backdrop-blur-md sm:p-8">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
         {/* Form: 4 bubbly category cards */}
         <div className="space-y-5">
           <div className="flex items-center gap-3 pb-1">
@@ -388,48 +388,48 @@ export function EssayWriterClient() {
           </form>
         </div>
 
-        {/* Output panel */}
-        <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 p-1 shadow-2xl ring-1 ring-neutral-700/50">
-          <div className="flex flex-1 flex-col rounded-[1.35rem] bg-gradient-to-b from-neutral-50 to-white p-6 sm:p-7">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-primary-600">Draft</p>
-              <h3 className="font-bold text-neutral-900">Your essay</h3>
-            </div>
-            {essay && (
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleHumanizeNext}
-                  className="rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary-500/25 transition hover:from-primary-700 hover:to-primary-600"
-                >
-                  {isPortfolioMode() ? "Polish in Grammar" : "Humanize next"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className={`rounded-2xl px-4 py-2.5 text-sm font-semibold transition ${
-                    copied
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-white text-neutral-700 shadow-sm ring-1 ring-neutral-200 hover:bg-neutral-50"
-                  }`}
-                >
-                  {copied ? "Copied" : "Copy"}
-                </button>
+        {/* Output panel — single surface; essay scrolls edge-to-edge below the toolbar */}
+        <div className="relative flex min-h-[420px] flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 p-[3px] shadow-2xl ring-1 ring-neutral-700/50 lg:min-h-[min(78vh,880px)]">
+          <div className="flex min-h-0 flex-1 flex-col rounded-[1.28rem] bg-gradient-to-b from-neutral-50 to-white">
+            <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-neutral-200/90 px-5 pb-3 pt-5 sm:px-6 sm:pb-4 sm:pt-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary-600">Draft</p>
+                <h3 className="font-bold text-neutral-900">Your essay</h3>
               </div>
-            )}
-          </div>
-          <div className="max-h-[min(70vh,720px)] min-h-[320px] flex-1 overflow-y-auto rounded-2xl bg-white/90 p-5 text-[15px] leading-relaxed text-neutral-800 whitespace-pre-wrap shadow-inner ring-1 ring-neutral-200/60">
-            {essay ? (
-              essay
-            ) : (
-              <span className="text-neutral-400">
-                {isPortfolioMode()
-                  ? "Your essay will appear here after you click \"Write essay.\" Use \"Polish in Grammar\" to open the grammar checker—your draft is copied to the clipboard so you can paste and refine."
-                  : "Your essay will appear here after you click \"Write essay.\" Use \"Humanize next\" to copy it to the humanizer and make it pass AI detection."}
-              </span>
-            )}
-          </div>
+              {essay && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleHumanizeNext}
+                    className="rounded-2xl bg-gradient-to-r from-primary-600 to-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-primary-500/25 transition hover:from-primary-700 hover:to-primary-600"
+                  >
+                    {isPortfolioMode() ? "Polish in Grammar" : "Humanize next"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className={`rounded-2xl px-4 py-2.5 text-sm font-semibold transition ${
+                      copied
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-white text-neutral-700 shadow-sm ring-1 ring-neutral-200 hover:bg-neutral-50"
+                    }`}
+                  >
+                    {copied ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4 sm:px-6 sm:py-5 text-[15px] leading-[1.65] text-neutral-800 whitespace-pre-wrap">
+              {essay ? (
+                essay
+              ) : (
+                <span className="text-neutral-400">
+                  {isPortfolioMode()
+                    ? "Your essay will appear here after you click \"Write essay.\" Use \"Polish in Grammar\" to open the grammar checker—your draft is copied to the clipboard so you can paste and refine."
+                    : "Your essay will appear here after you click \"Write essay.\" Use \"Humanize next\" to copy it to the humanizer and make it pass AI detection."}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         </div>

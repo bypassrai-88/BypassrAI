@@ -32,8 +32,7 @@ export function HumanizeClient() {
         secondaryAction="Check for AI"
         wordLimit={500}
         showWordCount
-        resultTitle="Humanized text · V2.1"
-        versionLabel="V2.1"
+        resultTitle="Humanized text"
         resultPlaceholder="Your humanized text will appear here after you click Humanize."
         primaryApiEndpoint="/api/humanize"
         secondaryApiEndpoint="/api/ai-check"

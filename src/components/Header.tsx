@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isPortfolioMode } from "@/config/site-variant";
 
 const mainNavLinksDefault = [
-  { href: "/humanize", label: "AI Humanizer", badge: "V2.1" },
+  { href: "/humanize", label: "AI Humanizer", badge: "V2" },
   { href: "/essay-writer", label: "Essay Writer" },
   { href: "/summarizer", label: "Summarizer" },
 ];

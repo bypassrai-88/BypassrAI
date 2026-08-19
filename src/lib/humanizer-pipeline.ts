@@ -51,6 +51,8 @@ function withEndPunct(inner: string, punct = "."): string {
 
 /** Always strip these AI tells (not randomized). */
 const ALWAYS_STRIP: [RegExp, string][] = [
+  [/^(Of course!?|Sure!?|Absolutely!?)\s*/i, ""],
+  [/\bonce upon a time,?\s*/gi, "Long ago, "],
   [/\bit is important to note that\s*/gi, ""],
   [/\bit is worth noting that\s*/gi, ""],
   [/\bit's important to (?:note|remember|understand) that\s*/gi, ""],
@@ -125,6 +127,7 @@ const PLAIN_SYNONYMS: [RegExp, string[]][] = [
   [/\bcommenced\b/gi, ["started"]],
   [/\bterminated\b/gi, ["ended"]],
   [/\bendeavor\b/gi, ["effort"]],
+  [/\bthere lived\b/gi, ["there was"]],
   [/\bnoticed\b/gi, ["saw", "spotted"]],
   [/\bwonderful\b/gi, ["amazing"]],
   [/\bbeautiful\b/gi, ["pretty", "lovely"]],
@@ -524,10 +527,22 @@ export function looksLikeEcho(original: string, output: string): boolean {
     for (const s of origSentences) {
       if (b.includes(s)) copied++;
     }
-    if (copied / origSentences.length >= 0.4) return true;
+    if (copied / origSentences.length >= 0.25) return true;
   }
 
-  return trigramOverlap(a, b) > 0.72;
+  return trigramOverlap(a, b) > 0.45;
+}
+
+export function listCopiedSentences(original: string, output: string): string[] {
+  const b = normalizeForCompare(output);
+  return original
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => {
+      const n = normalizeForCompare(s);
+      return n.split(" ").length >= 6 && b.includes(n);
+    })
+    .slice(0, 8);
 }
 
 /** Pipeline-only (no Claude): chop + polish. Used by optimizer / skipClaude. */

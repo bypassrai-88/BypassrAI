@@ -5,7 +5,11 @@ import {
   HUMANIZE_SYSTEM,
   HUMANIZE_USER_PREFIX,
 } from "@/lib/prompts";
-import { humanizerPreprocess, looksLikeEcho } from "@/lib/humanizer-pipeline";
+import {
+  humanizerPreprocess,
+  listCopiedSentences,
+  looksLikeEcho,
+} from "@/lib/humanizer-pipeline";
 
 const MODEL = "claude-sonnet-4-5-20250929";
 
@@ -33,7 +37,7 @@ async function claudeParaphrase(
     max_tokens: 4096,
     temperature,
     system,
-    messages: [{ role: "user", content: `${HUMANIZE_USER_PREFIX}${userText}` }],
+    messages: [{ role: "user", content: userText }],
   });
   const block = response.content.find((b) => b.type === "text");
   const raw = block && block.type === "text" ? block.text.trim() : "";
@@ -41,7 +45,8 @@ async function claudeParaphrase(
 }
 
 /**
- * Preprocess (ours) → Claude paraphrases → return that.
+ * Preprocess (ours) → Claude retells from memory → return that.
+ * If Claude copied, retry once with the copied lines called out.
  */
 export async function runHumanizeWithClaude(
   anthropic: Anthropic,
@@ -53,10 +58,25 @@ export async function runHumanizeWithClaude(
   const chopped = refine ? text : humanizerPreprocess(text, pipelineOpts);
   const systemPrompt = refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
 
-  let rewritten = await claudeParaphrase(anthropic, systemPrompt, chopped, 0.95);
+  let rewritten = await claudeParaphrase(
+    anthropic,
+    systemPrompt,
+    `${HUMANIZE_USER_PREFIX}${chopped}`,
+    1
+  );
 
   if (rewritten && looksLikeEcho(text, rewritten)) {
-    rewritten = await claudeParaphrase(anthropic, HUMANIZE_RETRY_SYSTEM, chopped, 1);
+    const copied = listCopiedSentences(text, rewritten);
+    const copiedBlock =
+      copied.length > 0
+        ? `\n\nYou copied these lines. None of them may appear again:\n${copied.map((s) => `- ${s}`).join("\n")}`
+        : "";
+    rewritten = await claudeParaphrase(
+      anthropic,
+      HUMANIZE_RETRY_SYSTEM,
+      `${HUMANIZE_USER_PREFIX}${chopped}${copiedBlock}`,
+      1
+    );
   }
 
   return rewritten;

@@ -3,19 +3,27 @@
  * Edit these to change how the AI behaves for each tool.
  */
 
-/** Humanizer: Claude paraphrases. We do not ask it to "clean up" the source. */
-export const HUMANIZE_SYSTEM = `Paraphrase the user's text in your own words.
+/** Humanizer: retell, don't tidy the source. */
+export const HUMANIZE_SYSTEM = `You already read the user's text. Write it again from memory in your own words.
 
-Keep the same meaning, names, plot, and facts. Change the wording and sentence structure. Do not copy sentences from the input.
+Keep names, facts, and what happens. Do not keep the original sentences.
 
-Keep paragraph breaks. No markdown. No preamble. No "here's the rewrite". Output only the paraphrased text.`;
+Required:
+- Do not reuse any sentence from the source. If a line could match the source, rewrite it.
+- Rewrite all dialogue / quoted speech in new wording. Same speaker, different words.
+- Do not start with the same opening line as the source (no "Once upon a time..." if that's how it began).
+- Keep paragraph breaks.
 
-export const HUMANIZE_USER_PREFIX = `Paraphrase this. Different words and sentence shapes. Same meaning. Do not copy:
+No markdown. No preamble. No "here's the rewrite". Output only the new version.`;
+
+export const HUMANIZE_USER_PREFIX = `Read this once, then retell it in your own words. New sentences. New dialogue. Same story/meaning. Do not copy:
 
 `;
 
 /** Used when the first pass stayed too close to the source. */
-export const HUMANIZE_RETRY_SYSTEM = `That was too close to the original. Paraphrase it again from scratch. New sentences. Same meaning, names, and facts. Keep paragraph breaks. Output only the paraphrased text.`;
+export const HUMANIZE_RETRY_SYSTEM = `You copied too much. Write the whole thing again from scratch.
+
+No original sentences. No original quotes. Start differently. Same names and plot. Keep paragraph breaks. Output only the new version.`;
 
 /** Extreme mode: legible but human flow. Favor opening style that scores human: short sentences, gerund openers, "folks". */
 export const HUMANIZE_EXTREME_SYSTEM = `The text below was deliberately mixed up (reordered, chopped). Rewrite it so it is legible and readable, but keep a natural, human flow—not a polished essay.
@@ -40,7 +48,7 @@ Do these (no topic-specific list):
 Change only those parts. Leave everything else as is. Do not reorder sections. Output the full text once. No preamble.`;
 
 /** Humanize-again: paraphrase once more. */
-export const HUMANIZE_REFINE_SYSTEM = `Paraphrase this again in different words. Same meaning. Do not copy sentences. Keep paragraph breaks. Output only the paraphrased text.`;
+export const HUMANIZE_REFINE_SYSTEM = `Write this again from memory in new words. Same meaning and names. New sentences and new dialogue. Do not copy. Keep paragraph breaks. Output only the new version.`;
 
 export const DETECTOR_SYSTEM =
   "You are an AI detector. Rate from 0 to 100 how likely the user's text is to be AI-generated (0 = definitely human, 100 = definitely AI). Reply with only a number, no explanation.";

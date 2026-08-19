@@ -125,8 +125,13 @@ const PLAIN_SYNONYMS: [RegExp, string[]][] = [
   [/\bcommenced\b/gi, ["started"]],
   [/\bterminated\b/gi, ["ended"]],
   [/\bendeavor\b/gi, ["effort"]],
-  [/\bamongst\b/gi, ["among"]],
-  [/\bwhilst\b/gi, ["while"]],
+  [/\bnoticed\b/gi, ["saw", "spotted"]],
+  [/\bwonderful\b/gi, ["amazing"]],
+  [/\bbeautiful\b/gi, ["pretty", "lovely"]],
+  [/\bwhispered\b/gi, ["said quietly"]],
+  [/\bbeneath\b/gi, ["under"]],
+  [/\bbegan\b/gi, ["started"]],
+  [/\bsurrounded by\b/gi, ["ringed by", "set in"]],
 ];
 
 function applyAlwaysStrip(text: string): string {
@@ -246,18 +251,28 @@ function glueShortSentences(text: string, rate: number): string {
   return joinSentences(out);
 }
 
+function mapParagraphs(text: string, fn: (paragraph: string) => string): string {
+  return text
+    .split(/\n\s*\n/)
+    .map((p) => fn(p.replace(/[ \t]+/g, " ").trim()))
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 /**
- * Pre-Claude: chop the draft a bit so the model isn't parroting perfect AI structure.
- * Meaning stays intact; we only change wording, clause order, and sentence cuts.
+ * Pre-Claude: light chop so the model isn't staring at a perfect copy.
+ * Keeps paragraph breaks.
  */
 export function humanizerPreprocess(text: string, options?: { extreme?: boolean }): string {
   const aggressive = options?.extreme === true || process.env.HUMANIZER_EXTREME === "1";
-  let result = text.trim();
-  result = applyPlainSynonyms(result, aggressive ? 0.95 : 0.7);
-  result = chopClauseOrder(result, aggressive ? 0.85 : 0.55);
-  result = chopLongSentences(result, aggressive ? 0.8 : 0.55);
-  result = glueShortSentences(result, aggressive ? 0.35 : 0.22);
-  return result.replace(/\s+/g, " ").trim();
+  return mapParagraphs(text.trim(), (paragraph) => {
+    let result = paragraph;
+    result = applyPlainSynonyms(result, aggressive ? 0.95 : 0.75);
+    result = chopClauseOrder(result, aggressive ? 0.85 : 0.55);
+    result = chopLongSentences(result, aggressive ? 0.8 : 0.6);
+    result = glueShortSentences(result, aggressive ? 0.35 : 0.2);
+    return result.replace(/[ \t]+/g, " ").trim();
+  });
 }
 
 // ---------- post: make it legible, keep a human edge ----------

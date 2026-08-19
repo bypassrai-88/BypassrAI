@@ -3,31 +3,19 @@
  * Edit these to change how the AI behaves for each tool.
  */
 
-/** Humanizer: Claude must paraphrase, not restore or copy the source. */
-export const HUMANIZE_SYSTEM = `You are rewriting text so it reads like a person wrote it — not a chatbot.
+/** Humanizer: Claude paraphrases. We do not ask it to "clean up" the source. */
+export const HUMANIZE_SYSTEM = `Paraphrase the user's text in your own words.
 
-This is a paraphrase, not a cleanup. Do not copy or restore the original sentences. Write new sentences with different structure and different wording. Keep the same facts, names, numbers, and meaning.
+Keep the same meaning, names, plot, and facts. Change the wording and sentence structure. Do not copy sentences from the input.
 
-Hard rules:
-- Rephrase every sentence. If a line could pass as copied from the source, rewrite it.
-- Mix sentence length: some under 10 words, some longer.
-- Vary how sentences start. Do not open two in a row with the same word.
-- Plain words. Contractions are fine (it's, don't, that's).
-- Keep the original tone. Formal stays mostly formal. Casual stays casual. Do not add slang or jokes that were not there.
-- No chatbot filler: Furthermore, Moreover, Additionally, In conclusion, To sum up, It is important to note, In today's world, plays a crucial role, delve, tapestry, landscape, underscore, pivotal, leverage, robust, comprehensive, "one can", "the X of" (the maintenance of, the enhancement of).
-- No em dashes. No markdown. No preamble.
+Keep paragraph breaks. No markdown. No preamble. No "here's the rewrite". Output only the paraphrased text.`;
 
-Output only the rewritten text.`;
+export const HUMANIZE_USER_PREFIX = `Paraphrase this. Different words and sentence shapes. Same meaning. Do not copy:
 
-export const HUMANIZE_USER_PREFIX = `Paraphrase the text below from scratch. Same facts. New sentences and wording. Do not copy.
-
-TEXT:
 `;
 
 /** Used when the first pass stayed too close to the source. */
-export const HUMANIZE_RETRY_SYSTEM = `The last rewrite stayed too close to the source. Rewrite it from scratch again.
-
-Change sentence shapes. Split and join sentences differently. Swap common words for natural alternatives. You may reorder ideas inside a paragraph if the meaning stays clear. Keep every fact, name, and number. No chatbot filler. No em dashes. Output only the rewritten text.`;
+export const HUMANIZE_RETRY_SYSTEM = `That was too close to the original. Paraphrase it again from scratch. New sentences. Same meaning, names, and facts. Keep paragraph breaks. Output only the paraphrased text.`;
 
 /** Extreme mode: legible but human flow. Favor opening style that scores human: short sentences, gerund openers, "folks". */
 export const HUMANIZE_EXTREME_SYSTEM = `The text below was deliberately mixed up (reordered, chopped). Rewrite it so it is legible and readable, but keep a natural, human flow—not a polished essay.
@@ -51,10 +39,8 @@ Do these (no topic-specific list):
 
 Change only those parts. Leave everything else as is. Do not reorder sections. Output the full text once. No preamble.`;
 
-/** Humanize-again: another human pass, different sentence shapes. */
-export const HUMANIZE_REFINE_SYSTEM = `This was already rewritten. Paraphrase it again in a slightly different human voice.
-
-Do not copy sentences from the input. Change sentence shapes and word choices. Mix short and long sentences. Keep the facts. No AI filler (Furthermore, Moreover, In conclusion, It is important to note). No em dashes. Contractions are fine. Output only the rewritten text.`;
+/** Humanize-again: paraphrase once more. */
+export const HUMANIZE_REFINE_SYSTEM = `Paraphrase this again in different words. Same meaning. Do not copy sentences. Keep paragraph breaks. Output only the paraphrased text.`;
 
 export const DETECTOR_SYSTEM =
   "You are an AI detector. Rate from 0 to 100 how likely the user's text is to be AI-generated (0 = definitely human, 100 = definitely AI). Reply with only a number, no explanation.";

@@ -504,9 +504,9 @@ function trigramOverlap(a: string, b: string): number {
   const B = grams(b);
   if (A.size === 0) return 1;
   let hit = 0;
-  for (const g of A) {
+  A.forEach((g) => {
     if (B.has(g)) hit++;
-  }
+  });
   return hit / A.size;
 }
 

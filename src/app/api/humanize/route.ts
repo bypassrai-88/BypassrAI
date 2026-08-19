@@ -11,40 +11,7 @@ import {
   checkUserQuota,
   incrementUserUsage,
 } from "@/lib/quota-user";
-import { HUMANIZE_SYSTEM, HUMANIZE_REFINE_SYSTEM } from "@/lib/prompts";
-import { humanizerPreprocess, humanizerPostProcess } from "@/lib/humanizer-pipeline";
-
-/** Remove duplicate output if model repeated itself */
-function dedupeResponse(raw: string): string {
-  const minChunk = 80;
-  if (raw.length < minChunk * 2) return raw;
-  
-  const firstChunk = raw.slice(0, minChunk);
-  const rest = raw.slice(minChunk);
-  const repeatIndex = rest.indexOf(firstChunk);
-  
-  if (repeatIndex !== -1) {
-    return raw.slice(0, minChunk + repeatIndex).trim();
-  }
-  
-  return raw;
-}
-
-/** Clean AI artifacts from output */
-function cleanAIArtifacts(raw: string): string {
-  let text = raw;
-  
-  // Remove markdown headers
-  text = text.replace(/^#+ .*\n*/gm, "");
-  text = text.replace(/^\*\*Rewritten.*?\*\*\n*/i, "");
-  text = text.replace(/^Rewritten (?:Text|Version)[:\s]*/i, "");
-  text = text.replace(/^Here(?:'s| is) the rewritten (?:text|version)[:\s]*/i, "");
-  
-  // Remove common AI openers
-  text = text.replace(/^(Here'?s?|Okay,?\s*so|Alright,?\s*so|So,?\s*basically)\s*/i, "");
-  
-  return text.trim();
-}
+import { runHumanizeWithClaude } from "@/lib/run-humanize";
 
 export async function POST(request: NextRequest) {
   let user: { id: string } | null = null;
@@ -97,25 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     const anthropic = new Anthropic({ apiKey });
-
-    // Our chop → Claude (human rewrite) → our polish.
-    // "Humanize again" (refine) skips the chop so we don't scramble an already-humanized draft.
-    const textForClaude = refine ? text : humanizerPreprocess(text);
-    const systemPrompt = refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
-
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
-      max_tokens: 4096,
-      temperature: 0.85,
-      system: systemPrompt,
-      messages: [{ role: "user", content: textForClaude }],
-    });
-
-    const block = response.content.find((b) => b.type === "text");
-    const raw = block && block.type === "text" ? block.text.trim() : "";
-    let humanized = dedupeResponse(raw);
-    humanized = cleanAIArtifacts(humanized);
-    humanized = humanizerPostProcess(humanized);
+    const humanized = await runHumanizeWithClaude(anthropic, text, { refine });
 
     if (!humanized) {
       return NextResponse.json({ error: "No response from AI." }, { status: 502 });

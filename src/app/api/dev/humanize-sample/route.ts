@@ -1,28 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { HUMANIZE_SYSTEM, HUMANIZE_REFINE_SYSTEM } from "@/lib/prompts";
-import { humanizerPreprocess, humanizerPostProcess, humanizerPipelineOnly, stripRepetitivePeriods } from "@/lib/humanizer-pipeline";
-
-/** Remove duplicate output if model repeated itself. */
-function dedupeResponse(raw: string): string {
-  const minChunk = 80;
-  if (raw.length < minChunk * 2) return raw;
-  const firstChunk = raw.slice(0, minChunk);
-  const rest = raw.slice(minChunk);
-  const repeatIndex = rest.indexOf(firstChunk);
-  if (repeatIndex !== -1) return raw.slice(0, minChunk + repeatIndex).trim();
-  return raw;
-}
-
-function cleanAIArtifacts(raw: string): string {
-  let text = raw;
-  text = text.replace(/^#+ .*\n*/gm, "");
-  text = text.replace(/^\*\*Rewritten.*?\*\*\n*/i, "");
-  text = text.replace(/^Rewritten (?:Text|Version)[:\s]*/i, "");
-  text = text.replace(/^Here(?:'s| is) the rewritten (?:text|version)[:\s]*/i, "");
-  text = text.replace(/^(Here'?s?|Okay,?\s*so|Alright,?\s*so|So,?\s*basically)\s*/i, "");
-  return text.trim();
-}
+import { humanizerPipelineOnly, stripRepetitivePeriods } from "@/lib/humanizer-pipeline";
+import { runHumanizeWithClaude } from "@/lib/run-humanize";
 
 /**
  * Dev-only: run humanizer on sample text without auth or quota.
@@ -45,12 +24,10 @@ export async function POST(request: NextRequest) {
   const refine = body.refine === true;
   const skipClaude = body.skipClaude === true;
   const extreme = body.extreme === true;
-  const pipelineOpts = extreme ? { extreme: true as const } : undefined;
   if (!text) {
     return NextResponse.json({ error: "Missing or empty text." }, { status: 400 });
   }
 
-  // Pipeline-only: no Claude, run pre + post (aggressive = post twice)
   if (skipClaude) {
     try {
       const humanized = humanizerPipelineOnly(text, { aggressive: true, extreme });
@@ -69,22 +46,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const anthropic = new Anthropic({ apiKey });
-    const textForClaude = refine ? text : humanizerPreprocess(text, pipelineOpts);
-    const systemPrompt = refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
-
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
-      max_tokens: 4096,
-      temperature: 0.85,
-      system: systemPrompt,
-      messages: [{ role: "user", content: textForClaude }],
-    });
-
-    const block = response.content.find((b) => b.type === "text");
-    const raw = block && block.type === "text" ? block.text.trim() : "";
-    let humanized = dedupeResponse(raw);
-    humanized = cleanAIArtifacts(humanized);
-    humanized = humanizerPostProcess(humanized, pipelineOpts);
+    let humanized = await runHumanizeWithClaude(anthropic, text, { refine, extreme });
     humanized = stripRepetitivePeriods(humanized ?? "");
 
     if (!humanized) {

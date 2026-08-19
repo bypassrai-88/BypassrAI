@@ -469,6 +469,52 @@ export function humanizerPostProcess(text: string, options?: { extreme?: boolean
   return result.trim();
 }
 
+function normalizeForCompare(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function trigramOverlap(a: string, b: string): number {
+  const grams = (s: string) => {
+    const words = s.split(" ");
+    const set = new Set<string>();
+    for (let i = 0; i < words.length - 2; i++) {
+      set.add(words.slice(i, i + 3).join(" "));
+    }
+    return set;
+  };
+  const A = grams(a);
+  const B = grams(b);
+  if (A.size === 0) return 1;
+  let hit = 0;
+  for (const g of A) {
+    if (B.has(g)) hit++;
+  }
+  return hit / A.size;
+}
+
+/** True when the model mostly copied the source instead of paraphrasing. */
+export function looksLikeEcho(original: string, output: string): boolean {
+  const a = normalizeForCompare(original);
+  const b = normalizeForCompare(output);
+  if (!a || !b) return true;
+  if (a === b) return true;
+
+  const origSentences = original
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => normalizeForCompare(s))
+    .filter((s) => s.split(" ").length >= 6);
+
+  if (origSentences.length > 0) {
+    let copied = 0;
+    for (const s of origSentences) {
+      if (b.includes(s)) copied++;
+    }
+    if (copied / origSentences.length >= 0.4) return true;
+  }
+
+  return trigramOverlap(a, b) > 0.72;
+}
+
 /** Pipeline-only (no Claude): chop + polish. Used by optimizer / skipClaude. */
 export function humanizerPipelineOnly(
   text: string,

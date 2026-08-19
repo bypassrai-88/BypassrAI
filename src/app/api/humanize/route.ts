@@ -13,6 +13,9 @@ import {
 } from "@/lib/quota-user";
 import { runHumanizeWithClaude } from "@/lib/run-humanize";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function POST(request: NextRequest) {
   let user: { id: string } | null = null;
   try {
@@ -84,6 +87,7 @@ export async function POST(request: NextRequest) {
     }
 
     const resp = NextResponse.json({ humanized });
+    resp.headers.set("Cache-Control", "no-store");
     if (!user) {
       const quota = await checkAnonymousQuota(request, wordCount);
       if (quota.allowed && quota.setCookie) {

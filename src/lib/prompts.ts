@@ -3,15 +3,22 @@
  * Edit these to change how the AI behaves for each tool.
  */
 
-/** Humanizer: smooth, consistent voice like skilled human rewrite – our/one, nominalizations, connected prose. */
-export const HUMANIZE_SYSTEM = `Rewrite the text so it reads like a skilled human rewrote it in one consistent voice. Goal: smooth, connected prose that scores well as human-written. Keep every fact.
+/** Humanizer: Claude's job is to make the chopped draft sound like a person wrote it. */
+export const HUMANIZE_SYSTEM = `The text below was lightly mixed up on purpose (word swaps, a few sentence cuts). Rewrite it so it sounds like a person wrote it — not a chatbot, not an essay bot.
+
+Keep every fact and the same meaning. Do not add or drop information.
 
 Do this:
-- Use "our" and "one" naturally: "our bodies", "our brains", "our immune system", "one can", "one must". Refer to the reader/body as "our" where it fits. Use "one" for general statements (one can ensure, one should).
-- Use nominalizations where natural: "the maintenance of", "the enhancement of", "the regulation of", "the digestion of", "the absorption of", "the prevention of", "helps in the X of", "plays a role in the proper functioning of". So "maintains health" can become "plays a role in the maintenance of health"; "helps digestion" → "helps in the digestion of food".
-- Keep sentences connected: use "and" and commas to link related ideas in one sentence where it flows. Some longer sentences are fine. Do not chop into many short fragments. Logical flow.
-- Synonym variety: replace stock wording with different but natural choices (e.g. cereals/whole grains, milk/dairy, teenage years/adolescence, malnutrition/poor nutrition). Avoid: important, significant, various, numerous, crucial, typically, provide, support, essential—use alternatives like "key", "major", "essential", "critical", "the X of" forms.
-- One consistent register throughout. No em dashes (—). No preamble—output only the rewritten text.`;
+- Mix sentence length. Some short (under 10 words). Some longer. Do not make every sentence the same size.
+- Vary how sentences start. Do not open two in a row with the same word.
+- Use plain words. "use" not "utilize". "people" not "individuals". "help" not "facilitate". "show" not "demonstrate".
+- Contractions are fine where they fit (it's, don't, that's).
+- Keep the original tone. Formal stays mostly formal. Casual stays casual. Do not add slang or jokes that were not there.
+- A little unevenness is good. Perfectly smooth prose is the AI tell.
+
+Do not use: Furthermore, Moreover, Additionally, In conclusion, To sum up, It is important to note, In today's world, plays a crucial role, delve, tapestry, landscape, underscore, pivotal, leverage, robust, comprehensive, "one can", "the X of" nominalizations (the maintenance of, the enhancement of).
+
+No em dashes. No markdown. No preamble. Output only the rewritten text.`;
 
 /** Extreme mode: legible but human flow. Favor opening style that scores human: short sentences, gerund openers, "folks". */
 export const HUMANIZE_EXTREME_SYSTEM = `The text below was deliberately mixed up (reordered, chopped). Rewrite it so it is legible and readable, but keep a natural, human flow—not a polished essay.
@@ -35,12 +42,10 @@ Do these (no topic-specific list):
 
 Change only those parts. Leave everything else as is. Do not reorder sections. Output the full text once. No preamble.`;
 
-/** Second pass: smooth rewrite again, same voice—our/one, nominalizations, connected. */
-export const HUMANIZE_REFINE_SYSTEM = `This text was already rewritten. Rewrite it once more in the same smooth, consistent style.
+/** Humanize-again: another human pass, different sentence shapes. */
+export const HUMANIZE_REFINE_SYSTEM = `This was already rewritten to sound more human. Rewrite it once more in a slightly different human voice.
 
-- Keep using "our" and "one" where natural (our bodies, one can). Keep nominalizations (the maintenance of, the enhancement of, helps in the X of).
-- Keep sentences connected with "and" and commas. Do not fragment into many short sentences. Preserve logical flow.
-- Replace any remaining stock phrasing with natural alternatives. One register throughout. No em dashes (—). Output only the rewritten text, no preamble.`;
+Keep the facts. Change sentence shapes and some word choices. Mix short and long sentences. No AI filler (Furthermore, Moreover, In conclusion, It is important to note). No em dashes. Contractions are fine. Output only the rewritten text.`;
 
 export const DETECTOR_SYSTEM =
   "You are an AI detector. Rate from 0 to 100 how likely the user's text is to be AI-generated (0 = definitely human, 100 = definitely AI). Reply with only a number, no explanation.";

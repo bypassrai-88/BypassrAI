@@ -98,42 +98,24 @@ export async function POST(request: NextRequest) {
 
     const anthropic = new Anthropic({ apiKey });
 
-    // Pre-process: when full humanize, run pre twice so Claude sees heavily scrambled input
-    const textForClaude = refine ? text : humanizerPreprocess(humanizerPreprocess(text));
-
+    // Our chop → Claude (human rewrite) → our polish.
+    // "Humanize again" (refine) skips the chop so we don't scramble an already-humanized draft.
+    const textForClaude = refine ? text : humanizerPreprocess(text);
     const systemPrompt = refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
 
-    // First Claude call: humanize or refine
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
-      temperature: 1.0,
+      temperature: 0.85,
       system: systemPrompt,
       messages: [{ role: "user", content: textForClaude }],
     });
 
     const block = response.content.find((b) => b.type === "text");
-    let raw = block && block.type === "text" ? block.text.trim() : "";
+    const raw = block && block.type === "text" ? block.text.trim() : "";
     let humanized = dedupeResponse(raw);
     humanized = cleanAIArtifacts(humanized);
     humanized = humanizerPostProcess(humanized);
-
-    // Second pass (refine) when doing full humanize: add human unevenness
-    if (!refine && humanized) {
-      const refineResponse = await anthropic.messages.create({
-        model: "claude-sonnet-4-5-20250929",
-        max_tokens: 4096,
-        temperature: 1.0,
-        system: HUMANIZE_REFINE_SYSTEM,
-        messages: [{ role: "user", content: humanized }],
-      });
-      const refineBlock = refineResponse.content.find((b) => b.type === "text");
-      raw = refineBlock && refineBlock.type === "text" ? refineBlock.text.trim() : "";
-      humanized = dedupeResponse(raw);
-      humanized = cleanAIArtifacts(humanized);
-      humanized = humanizerPostProcess(humanized);
-      humanized = humanizerPostProcess(humanized); // second post-pass to strip remaining AI phrasing
-    }
 
     if (!humanized) {
       return NextResponse.json({ error: "No response from AI." }, { status: 502 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { HUMANIZE_SYSTEM, HUMANIZE_REFINE_SYSTEM, HUMANIZE_EXTREME_SYSTEM, HUMANIZE_EXTREME_DEAI_SYSTEM } from "@/lib/prompts";
+import { HUMANIZE_SYSTEM, HUMANIZE_REFINE_SYSTEM } from "@/lib/prompts";
 import { humanizerPreprocess, humanizerPostProcess, humanizerPipelineOnly, stripRepetitivePeriods } from "@/lib/humanizer-pipeline";
 
 /** Remove duplicate output if model repeated itself. */
@@ -69,51 +69,23 @@ export async function POST(request: NextRequest) {
 
   try {
     const anthropic = new Anthropic({ apiKey });
-    const textForClaude = refine
-      ? text
-      : extreme
-        ? humanizerPreprocess(humanizerPreprocess(text, pipelineOpts), pipelineOpts)
-        : humanizerPreprocess(humanizerPreprocess(text, pipelineOpts), pipelineOpts);
-    const systemPrompt = extreme ? HUMANIZE_EXTREME_SYSTEM : refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
+    const textForClaude = refine ? text : humanizerPreprocess(text, pipelineOpts);
+    const systemPrompt = refine ? HUMANIZE_REFINE_SYSTEM : HUMANIZE_SYSTEM;
 
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-5-20250929",
       max_tokens: 4096,
-      temperature: extreme ? 0.75 : 1.0, // run-88 (60% AI) used 0.75
+      temperature: 0.85,
       system: systemPrompt,
       messages: [{ role: "user", content: textForClaude }],
     });
 
     const block = response.content.find((b) => b.type === "text");
-    let raw = block && block.type === "text" ? block.text.trim() : "";
+    const raw = block && block.type === "text" ? block.text.trim() : "";
     let humanized = dedupeResponse(raw);
     humanized = cleanAIArtifacts(humanized);
-
-    // Extreme: skip second Claude (DEAI) so we don't re-split/rephrase and break coherence
-    // humanized stays as first Claude output (fix coherence only)
-
     humanized = humanizerPostProcess(humanized, pipelineOpts);
     humanized = stripRepetitivePeriods(humanized ?? "");
-    if (humanized) {
-      humanized = humanized.replace(/\.{3,}/g, ".").replace(/\.{2,}/g, ".");
-    }
-
-    // Second pass (refine) when doing full humanize — skip in extreme so we don't re-smooth the chaos
-    if (!refine && !extreme && humanized) {
-      const refineResponse = await anthropic.messages.create({
-        model: "claude-sonnet-4-5-20250929",
-        max_tokens: 4096,
-        temperature: 1.0,
-        system: HUMANIZE_REFINE_SYSTEM,
-        messages: [{ role: "user", content: humanized }],
-      });
-      const refineBlock = refineResponse.content.find((b) => b.type === "text");
-      raw = refineBlock && refineBlock.type === "text" ? refineBlock.text.trim() : "";
-      humanized = dedupeResponse(raw);
-      humanized = cleanAIArtifacts(humanized);
-      humanized = humanizerPostProcess(humanized, pipelineOpts);
-      humanized = humanizerPostProcess(humanized, pipelineOpts); // second post-pass to strip remaining AI phrasing
-    }
 
     if (!humanized) {
       return NextResponse.json({ error: "No response from AI." }, { status: 502 });

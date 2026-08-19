@@ -36,6 +36,8 @@ type ToolEditorProps = {
   showHumanizeAgain?: boolean;
   /** Label for the "humanize again" button (e.g. "Humanize again") */
   humanizeAgainLabel?: string;
+  /** Shown on the result panel so we can tell which pipeline build is live */
+  versionLabel?: string;
   /** Pre-fill the input (e.g. from essay writer "Humanize next") */
   initialInput?: string;
   /** When true, run primary action once with initialInput after mount */
@@ -57,6 +59,7 @@ export function ToolEditor({
   loadingMessages,
   showHumanizeAgain = false,
   humanizeAgainLabel = "Humanize again",
+  versionLabel,
   initialInput,
   autoRunPrimary = false,
 }: ToolEditorProps) {
@@ -232,7 +235,14 @@ export function ToolEditor({
   const outputPanel = (
     <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm flex flex-col min-h-[320px]">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="font-semibold text-neutral-900">{resultTitle}</h3>
+        <h3 className="font-semibold text-neutral-900">
+          {resultTitle}
+          {versionLabel ? (
+            <span className="ml-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800 border border-amber-200">
+              {versionLabel}
+            </span>
+          ) : null}
+        </h3>
         <div className="flex items-center gap-2">
           {showHumanizeAgain && output.trim() && (
             <button

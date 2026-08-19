@@ -11,7 +11,7 @@ import {
   checkUserQuota,
   incrementUserUsage,
 } from "@/lib/quota-user";
-import { runHumanizeWithClaude } from "@/lib/run-humanize";
+import { runHumanizeWithClaude, HUMANIZER_VERSION } from "@/lib/run-humanize";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const resp = NextResponse.json({ humanized });
+    const resp = NextResponse.json({ humanized, version: HUMANIZER_VERSION });
     resp.headers.set("Cache-Control", "no-store");
     if (!user) {
       const quota = await checkAnonymousQuota(request, wordCount);
